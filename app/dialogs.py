@@ -89,7 +89,9 @@ class VMethodDlg(QtGui.QDialog):
 
         self.wayLabel = QtGui.QLabel(self.tr("way"))
         self.wayCmb = QtGui.QComboBox()
-        wayList = [self.tr("pressin"),self.tr("extraction")]
+        wayList = [self.tr("Auxiliary ram"),self.tr("Discontinuous ram"),self.tr("Single double row"),\
+                   self.tr("Local fan in serier"),self.tr("hybrid ventilation"),self.tr("wind cabinet ventilation"),\
+                  self.tr("wind library ventilation"),self.tr("drilling ventilation")]
         self.wayCmb.addItems(wayList)
 
         self.mainLayout.addWidget(self.methodLabel,0,0)
@@ -129,7 +131,10 @@ class HairDryerDlg(QtGui.QDialog):
 
         self.junctionLabel = QtGui.QLabel(self.tr("junctionWay"))
         self.junctionCmb = QtGui.QComboBox()
-        self.junctionList = [self.tr("Coil reverse side"),self.tr("plug in")]
+        self.junctionList = [self.tr("Coil reverse side"),
+                             self.tr("plug in"),
+                             self.tr("fanlancaosheng"),
+                             self.tr("fanlandianquan")]
         self.junctionCmb.addItems(self.junctionList)
         self.junctionCmb.setEditable(True)
 
@@ -445,23 +450,26 @@ class CaclMineHeatDlg(QtGui.QDialog):
         self.temperOutLabel = QtGui.QLabel(self.tr("temperatureOut"))
         self.temperOutEdit = QtGui.QLineEdit()
 
-        self.mainLayout.addWidget(self.cpHeatLabel,0,0)
-        self.mainLayout.addWidget(self.cpHeatEdit,0,1)
+        self.mainLayout.addWidget(self.sumPowerLabel,0,0)
+        self.mainLayout.addWidget(self.sumPowerEdit,0,1)
 
-        self.mainLayout.addWidget(self.airDensityLabel,1,0)
-        self.mainLayout.addWidget(self.airDensityEdit,1,1)
+        self.mainLayout.addWidget(self.cpHeatLabel,1,0)
+        self.mainLayout.addWidget(self.cpHeatEdit,1,1)
 
-        self.mainLayout.addWidget(self.temperInLabel,2,0)
-        self.mainLayout.addWidget(self.temperInEdit,2,1)
+        self.mainLayout.addWidget(self.airDensityLabel,2,0)
+        self.mainLayout.addWidget(self.airDensityEdit,2,1)
 
-        self.mainLayout.addWidget(self.temperOutLabel,3,0)
-        self.mainLayout.addWidget(self.temperOutEdit,3,1)
+        self.mainLayout.addWidget(self.temperInLabel,3,0)
+        self.mainLayout.addWidget(self.temperInEdit,3,1)
+
+        self.mainLayout.addWidget(self.temperOutLabel,4,0)
+        self.mainLayout.addWidget(self.temperOutEdit,4,1)
 
         self.btnBox = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel)
         self.btnBox.accepted.connect(self.accept)
         self.btnBox.rejected.connect(self.reject)
 
-        self.mainLayout.addWidget(self.btnBox,4,1)
+        self.mainLayout.addWidget(self.btnBox,5,1)
 
         self.setLayout(self.mainLayout)
         #self.resize(400,300)

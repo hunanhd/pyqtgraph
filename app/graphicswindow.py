@@ -89,6 +89,8 @@ class GraphicsWindow(pg.GraphicsView):
         else:
             self.parent().autoAct.setEnabled(False)
 
+        self.setMenuParam()
+
     def caclTunPts(self, pt, l, h):
         fourPts = [pt]
         fourPts.append(QtCore.QPointF(pt.x() + l, pt.y()))
@@ -103,14 +105,14 @@ class GraphicsWindow(pg.GraphicsView):
             if self.mode == 'InsertTunnel':
                 t2 = Tunnel(fourPts[0], fourPts[2])
                 t3 = Tunnel(fourPts[3], fourPts[0])
-                t1 = Tunnel(fourPts[0], fourPts[1])
+                t1 = Tunnel(fourPts[0], fourPts[1],True)
                 t4 = Tunnel(fourPts[1], fourPts[2],True)
                 # t5 = Tunnel(fourPts[1], pg.Point(1000, 0))
                 # t6 = Tunnel(fourPts[1], fourPts[3])
                 self.vb.addItem(t2)
                 self.vb.addItem(t3)
                 self.vb.addItem(t1)
-                self.vb.addItem(t4)
+                # self.vb.addItem(t4)
 
                 # self.vb.addItem(t5)
                 # self.vb.addItem(t6)
@@ -155,7 +157,7 @@ class GraphicsWindow(pg.GraphicsView):
                     h3 = HairDryer(fourPts[1], fourPts[2])
                 self.vb.addItem(h1)
                 self.vb.addItem(h2)
-                self.vb.addItem(h3)
+                # self.vb.addItem(h3)
 
                 del h1,h2,h3
 
@@ -163,17 +165,6 @@ class GraphicsWindow(pg.GraphicsView):
                 self.vb.scene().update()
             if self.mode == 'InsertFan':
                 self.insertFan(evt)
-                self.plot = pg.PlotItem()
-                self.vb.addItem(self.plot)
-                self.vb.removeItem(self.plot.autoBtn)
-                self.plot.hideAxis('left')
-                self.plot.hideAxis('bottom')
-                self.c = self.plot.plot(x=np.linspace(mousePt.x(),0.001,1000),y=np.linspace(mousePt.y(),0.001,1000))
-                a = pg.CurveArrow(self.c)
-                a.setStyle(headLen=40)
-                self.plot.addItem(a)
-                self.anim = a.makeAnimation(loop=-1)
-                self.anim.start()
         self.mode = 'NoMode'
         evt.accept()
 
@@ -189,11 +180,70 @@ class GraphicsWindow(pg.GraphicsView):
             self.vb.addItem(arrow)
             self.vb.addItem(f)
             del f
+
+            # 动态箭头
+
+            ax = np.linspace(h.spt.x(),h.ept.x(), 500)
+            bx = np.linspace(h.ept.x(),h.ept.x()+120, 500)
+            ay = np.linspace(h.spt.y(),h.ept.y(), 500)
+            by = np.linspace(h.ept.y(),h.ept.y(), 500)
+            #构造一条曲线curve(要输入x,y轴数据,不一定是递增或递减)
+            #curve = pg.PlotDataItem(x=np.linspace(h.spt.x(),h.ept.x(), 500),y=np.linspace(h.spt.y(),h.ept.y(),500),pixMode = False)
+            curve = pg.PlotDataItem(x=np.append(ax,bx),y=np.append(ay,by),pixMode = False)
+            #设置空画笔,这样就可以看不见曲线了(实质内部仍然在绘制曲线)
+            #或者从PlotDataItem派生,重载paint函数(函数内部什么也不做)
+            curve.setPen(None)
+            self.vb.addItem(curve)
+
+            #构造一个曲线箭头(curve将变成a的parent)
+            a = pg.CurveArrow(curve,pixMode = False)
+            a.setStyle(headLen=20)
+
+            #构造动画对象(一直循环)
+            #duration用来调节速度,默认值1000,loop等于-1表示永久循环
+            self.anim = a.makeAnimation(duration=3000,loop=-1)
+            self.anim.start()
+
         else:
             msg = QtGui.QMessageBox()
             msg.setWindowTitle (self.tr("Warming"))
             msg.setText(self.tr("Fan must be in the hairDryer"))
             msg.exec_()
+
+    def setMenuParam(self):
+        all_items = self.vb.addedItems
+        tunnels = findByClass(all_items,Tunnel)
+        fans = findByClass(all_items,Fan)
+        tSelectedNum = 0
+        ttSelectedNum = 0
+        hSelectedNum = 0
+        fSelectedNum = 0
+        for tunnel in tunnels:
+            if tunnel.isTTunnel and type(tunnel) != HairDryer and tunnel.selectFlag:
+                ttSelectedNum = ttSelectedNum + 1
+            if tunnel.isTTunnel is False and type(tunnel) != HairDryer and tunnel.selectFlag:
+                tSelectedNum = tSelectedNum + 1
+            if tunnel.isTTunnel is False and type(tunnel) == HairDryer and tunnel.selectFlag:
+                hSelectedNum = hSelectedNum + 1
+
+        for fan in fans:
+            if fan.selectFlag:
+                fSelectedNum = fSelectedNum + 1
+
+        if hSelectedNum is 1:
+            global_inst.mw_.hairDryerProAct.setEnabled(True)
+        else:
+            global_inst.mw_.hairDryerProAct.setEnabled(False)
+
+        if tSelectedNum is 1:
+            global_inst.mw_.tunnelProAct.setEnabled(True)
+        else:
+            global_inst.mw_.tunnelProAct.setEnabled(False)
+
+        if ttSelectedNum is 1:
+            global_inst.mw_.ttunnelProAct.setEnabled(True)
+        else:
+            global_inst.mw_.ttunnelProAct.setEnabled(False)
 
 #-------------------------------------------------------------------------#
         # 之前没有注释ViewBox里面的setFlag是捕捉得到的是boundingRect返回的矩形

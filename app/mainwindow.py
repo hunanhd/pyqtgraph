@@ -1,4 +1,4 @@
-# -*- coding:utf-8 -*-
+#-*- coding:utf-8 -*-
 
 from PyQt4 import QtCore
 
@@ -17,6 +17,7 @@ class MainWindow(QtGui.QMainWindow):
         self.setWindowState(QtCore.Qt.WindowMaximized)
         self.win = GraphicsWindow()
         self.setCentralWidget(self.win)
+        self.fltIsStart = False
 
     def closeEvent(self, event):
         pass
@@ -36,8 +37,8 @@ class MainWindow(QtGui.QMainWindow):
     def autoViewAll(self):
         global_inst.win_.vb.enableAutoRange()
 
-    def test(self):
-        global_inst.win_.vb.removeSelect()
+    # def test(self):
+    #     global_inst.win_.vb.removeSelect()
 
     def methodChoose(self):
         mtd = VMethodDlg()
@@ -98,6 +99,61 @@ class MainWindow(QtGui.QMainWindow):
         msg.setText("There are some promblem!!!")
         msg.exec_()
 
+    def afterDamp(self):
+        aftDamp = CaclAfterDampDlg()
+        if aftDamp.exec_() == QtGui.QDialog.Accepted:
+            print aftDamp.timeEdit.text()
+
+    def windSpeed(self):
+        windspd = CaclWindSpeedDlg()
+        if windspd.exec_() == QtGui.QDialog.Accepted:
+            print windspd.speedEdit.text()
+
+    def unitPower(self):
+        untpow = CaclUnitPowerDlg()
+        if untpow.exec_() == QtGui.QDialog.Accepted:
+            print untpow.unitPowerEdit.text()
+
+    def mineHeat(self):
+        mineheat = CaclMineHeatDlg()
+        if mineheat.exec_() == QtGui.QDialog.Accepted:
+            print mineheat.sumPowerEdit.text()
+
+    def workers(self):
+        woks = CaclWorkerDlg()
+        if woks.exec_() == QtGui.QDialog.Accepted:
+            print woks.numWorkerEdit.text()
+
+    def ensureQ(self):
+        msg = QtGui.QMessageBox()
+        msg.setWindowTitle(self.tr("ensureQ"))
+        msg.setText("max of Q is ")
+        msg.exec_()
+
+    def ensureVMetd(self):
+        msg = QtGui.QMessageBox()
+        msg.setWindowTitle(self.tr("ensureVmetd"))
+        str = self.tr("the method is one fan")
+        str.append("\n")
+        str.append(self.tr("fan's typle: No6.0/4*22"))
+        msg.setText(str)
+        msg.exec_()
+
+    def startFluent(self):
+        import win32api
+        handle = win32api.ShellExecute(0,'open','C:/Fluent.Inc/ntbin/ntx86/fluent.exe','-r6.3.26 2d -i "loadplot.scm"' ,'./scm',1)
+        if handle:
+            self.fltIsStart = True
+    def endFluent(self):
+        import os,win32api
+        if self.fltIsStart:
+            os.system('taskkill /f /im fl6326s.exe')
+            self.fltIsStart = False
+        else:
+            msg = QtGui.QMessageBox()
+            msg.setWindowTitle(self.tr("warming"))
+            msg.setText(self.tr("flunet is not start!"))
+            msg.exec_()
     def printfile(self):
         # printer = QtGui.QPrinter()
         # dialog = QtGui.QPrintDialog(printer, self)
@@ -186,8 +242,8 @@ class MainWindow(QtGui.QMainWindow):
                                       self.tr("&Auto"), self, shortcut='A',
                                       statusTip=self.tr("Auto Visible"), triggered=self.autoViewAll)
 
-        self.testAct = QtGui.QAction(self.tr("&Test"), self,
-                                      statusTip=self.tr("test"), triggered=self.test)
+        # self.testAct = QtGui.QAction(self.tr("&Test"), self,
+        #                               statusTip=self.tr("test"), triggered=self.test)
 
         # triggered=self.textEdit.paste
 
@@ -253,6 +309,58 @@ class MainWindow(QtGui.QMainWindow):
                                         statusTip="Show the Qt library's About box",
                                         triggered=QtGui.qApp.aboutQt)
 
+        self.afterDampAct = QtGui.QAction(self.tr("After Damp"), self,
+                                        statusTip=self.tr("caculate by after damp"),
+                                        triggered=self.afterDamp)
+
+        self.windSpeedAct = QtGui.QAction(self.tr("wind speed"), self,
+                                        statusTip=self.tr("caculate by wind speed"),
+                                        triggered=self.windSpeed)
+
+        self.unitPowerAct = QtGui.QAction(self.tr("unit power"), self,
+                                        statusTip=self.tr("caculate by unit power"),
+                                        triggered=self.unitPower)
+
+        self.mineHeatAct = QtGui.QAction(self.tr("mine heat"), self,
+                                        statusTip=self.tr("caculate by mine heat"),
+                                        triggered=self.mineHeat)
+
+        self.workersAct = QtGui.QAction(self.tr("Workers"), self,
+                                        statusTip=self.tr("caculate by workers"),
+                                        triggered=self.workers)
+
+        self.ensureQAct = QtGui.QAction(self.tr("ensureQ"), self,
+                                        statusTip=self.tr("ensure Q"),
+                                        triggered=self.ensureQ)
+
+        self.ensureFansAct = QtGui.QAction(self.tr("ensureFans"), self,
+                                        statusTip=self.tr("ensure the fans"),
+                                        triggered=self.ensureQ)
+
+        self.ensureHairDryerAct = QtGui.QAction(self.tr("ensureHairDryer"), self,
+                                        statusTip=self.tr("ensure the hairDryer"),
+                                        triggered=self.ensureQ)
+
+        self.ensureHairDryerAct = QtGui.QAction(self.tr("ensureHairDryer"), self,
+                                        statusTip=self.tr("ensure the hairDryer"),
+                                        triggered=self.ensureQ)
+
+        self.ensureVTPAct = QtGui.QAction(self.tr("ensureVTP"), self,
+                                        statusTip=self.tr("ensure the VTP"),
+                                        triggered=self.ensureQ)
+
+        self.ensureVMetdAct = QtGui.QAction(self.tr("ensureMethod"), self,
+                                        statusTip=self.tr("ensure the VMethod"),
+                                        triggered=self.ensureVMetd)
+
+        self.startFltAct = QtGui.QAction(self.tr("startFluent"), self,
+                                        statusTip=self.tr("Start the fluent"),
+                                        triggered=self.startFluent)
+
+        self.endFltAct = QtGui.QAction(self.tr("endFluent"), self,
+                                        statusTip=self.tr("End the fluent"),
+                                        triggered=self.endFluent)
+
         # self.textEdit.copyAvailable.connect(self.cutAct.setEnabled)
         # self.textEdit.copyAvailable.connect(self.copyAct.setEnabled)
 
@@ -277,7 +385,9 @@ class MainWindow(QtGui.QMainWindow):
 
         self.viewMenu = self.menuBar().addMenu(self.tr("&View"))
         self.viewMenu.addAction(self.autoAct)
-        self.viewMenu.addAction(self.testAct)
+        self.viewMenu.addAction(self.startFltAct)
+        self.viewMenu.addAction(self.endFltAct)
+        # self.viewMenu.addAction(self.testAct)
 
         self.menuBar().addSeparator()
 
@@ -304,6 +414,22 @@ class MainWindow(QtGui.QMainWindow):
         self.paramMenu.addAction(self.seriesFanAct)
         self.paramMenu.addAction(self.drillingVentAct)
         self.paramMenu.addAction(self.nodeProAct)
+
+        self.menuBar().addSeparator()
+
+        self.caculMenu = self.menuBar().addMenu(self.tr("Caculation"))
+        self.caculMenu.addAction(self.afterDampAct)
+        self.caculMenu.addAction(self.windSpeedAct)
+        self.caculMenu.addAction(self.unitPowerAct)
+        self.caculMenu.addAction(self.mineHeatAct)
+        self.caculMenu.addAction(self.workersAct)
+        self.caculMenu.addAction(self.ensureQAct)
+
+        self.ensureMenu = self.menuBar().addMenu(self.tr("EnsureProject"))
+        self.ensureMenu.addAction(self.ensureFansAct)
+        self.ensureMenu.addAction(self.ensureHairDryerAct)
+        self.ensureMenu.addAction(self.ensureVTPAct)
+        self.ensureMenu.addAction(self.ensureVMetdAct)
 
         self.menuBar().addSeparator()
 
@@ -337,7 +463,9 @@ class MainWindow(QtGui.QMainWindow):
 
         self.viewToolBar = self.addToolBar(self.tr("View"))
         self.viewToolBar.addAction(self.autoAct)
-        self.viewToolBar.addAction(self.testAct)
+        self.viewToolBar.addAction(self.startFltAct)
+        self.viewToolBar.addAction(self.endFltAct)
+        # self.viewToolBar.addAction(self.testAct)
 
     def createStatusBar(self):
         self.statusBar().showMessage(self.tr("Ready"))

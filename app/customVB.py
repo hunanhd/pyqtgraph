@@ -20,7 +20,7 @@ class CustomViewBox(pg.ViewBox):
         self.setPos(0,0)
 
     def removeSelect(self):
-        print "enter removeSelect+++++++++++++++"
+        # print "enter removeSelect+++++++++++++++"
         self.disableAutoRange(pg.ViewBox.XYAxes)
         all_items = global_inst.win_.vb.addedItems
         tunnels = findByClass(all_items,Tunnel)
@@ -30,13 +30,13 @@ class CustomViewBox(pg.ViewBox):
                 # b.hide()
                 self.removeItem(b)
         for f in fans:
-            print f
+            # print f
             if f.selectFlag:
                 self.removeItem(f)
                 self.removeItem(f.arrow)
                 # f.hide()
                 # f.arrow.hide()
-        print "leave removeSelect+++++++++++++++"
+        # print "leave removeSelect+++++++++++++++"
 
     def removeFans(self):
         all_items = global_inst.win_.vb.addedItems
