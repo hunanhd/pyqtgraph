@@ -140,12 +140,28 @@ class MainWindow(QtGui.QMainWindow):
         msg.exec_()
 
     def startFluent(self):
-        import win32api
-        handle = win32api.ShellExecute(0,'open','C:/Fluent.Inc/ntbin/ntx86/fluent.exe','-r6.3.26 2d -i "loadplot.scm"' ,'./scm',1)
+        import win32api,os,time
+        # if os.path.exists('./scm/hd.msh') is False:
+        delfiles = []
+        for parent,dirname,filename in os.walk("."):
+            for f in filename:
+                subfix = os.path.splitext(f)[0]
+                if subfix == "hd":
+                    delfiles.append(f)
+        # os.remove('hd.cas')
+        for df in delfiles:
+            try:
+                os.remove('./scm/%s'%df)
+            except  WindowsError:
+                pass
+
+        win32api.ShellExecute(0,'open','C:/Fluent.Inc/ntbin/ntx86/gambit.exe','-r2.4.6 -id "hd" -inputfile "writed.jou"' ,'./scm',1)
+        time.sleep(0.01)
+        handle = win32api.ShellExecute(0,'open','C:/Fluent.Inc/ntbin/ntx86/fluent.exe','-r6.3.26 2d -i "load.scm"' ,'./scm',1)
         if handle:
             self.fltIsStart = True
     def endFluent(self):
-        import os,win32api
+        import os
         if self.fltIsStart:
             os.system('taskkill /f /im fl6326s.exe')
             self.fltIsStart = False

@@ -1,0 +1,19 @@
+vertex create coordinates 60 3 0
+vertex create coordinates 110 3 0
+vertex create coordinates 110 0 0
+vertex create coordinates 122 0 0
+vertex create coordinates 122 12 0
+vertex create coordinates 60 12 0
+edge create straight "vertex.1" "vertex.6" "vertex.5" "vertex.4" "vertex.3" \
+  "vertex.2"
+edge create straight "vertex.2" "vertex.1"
+edge picklink "edge.2"
+edge mesh "edge.2" successive ratio1 1 intervals 105
+edge picklink "edge.3"
+edge mesh "edge.3" successive ratio1 1 intervals 14
+face create wireframe "edge.1" "edge.2" "edge.3" "edge.4" "edge.5" "edge.6" \
+  real
+face mesh "face.1" submap size 1
+physics create "inlet" btype "VELOCITY_INLET" edge "edge.5"
+physics create "outlet" btype "OUTFLOW" edge "edge.1"
+export fluent5 "hd.msh" nozval

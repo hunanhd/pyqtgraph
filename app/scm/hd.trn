@@ -1,0 +1,63 @@
+/ File opened for write Sun Jan 09 21:41:11 2005.
+ 
+*** LISTING "hd" FILES IN DIRECTORY:
+    .
+ 
+    hd.lok
+Copyright(c) 1988-2005, Fluent Inc. All rights reserved.
+http://www.fluent.com
+ 
+Gambit incorporates Simulation Modeling Suite(TM) software by Simmetrix Inc.
+ 
+Portions of this software are owned by Parametric Technology Corporation.
+Copyright(c) 2002. All Rights Reserved.
+ 
+Portions of this software are owned by Unigraphics Solutions Corporation or its subsidiaries.
+Copyright(c) 2004. All Rights Reserved.
+ 
+Spatial Indexing Library version 0.81b (beta) provided under GNU Lesser General Public License
+(http://www.gnu.org/copyleft/lesser.html)
+ 
+Command> vertex create coordinates 60 3 0
+Created vertex: vertex.1
+Command> vertex create coordinates 110 3 0
+Created vertex: vertex.2
+Command> vertex create coordinates 110 0 0
+Created vertex: vertex.3
+Command> vertex create coordinates 122 0 0
+Created vertex: vertex.4
+Command> vertex create coordinates 122 12 0
+Created vertex: vertex.5
+Command> vertex create coordinates 60 12 0
+Created vertex: vertex.6
+Command> edge create straight "vertex.1" "vertex.6" "vertex.5" "vertex.4" "vertex.3"   "vertex.2"
+Created edge: edge.1
+Created edge: edge.2
+Created edge: edge.3
+Created edge: edge.4
+Created edge: edge.5
+Command> edge create straight "vertex.2" "vertex.1"
+Created edge: edge.6
+Command> edge picklink "edge.2"
+Command> edge mesh "edge.2" successive ratio1 1 intervals 105
+Mesh generated for edge edge.2:   mesh edges = 105.
+Command> edge picklink "edge.3"
+Command> edge mesh "edge.3" successive ratio1 1 intervals 14
+Mesh generated for edge edge.3:   mesh edges = 14.
+Command> face create wireframe "edge.1" "edge.2" "edge.3" "edge.4" "edge.5" "edge.6"   real
+Created face: face.1
+Command> face mesh "face.1" submap size 1
+Mesh generated for face face.1:   mesh faces = 1130.
+Command> physics create "inlet" btype "VELOCITY_INLET" edge "edge.5"
+Created Boundary entity: inlet
+Command> physics create "outlet" btype "OUTFLOW" edge "edge.1"
+Created Boundary entity: outlet
+Command> export fluent5 "hd.msh" nozval
+A default (FLUID) continuum entity was created for 1 entities including the following:
+face.1 
+A default (WALL) boundary entity was created for 4 entities including the following:
+edge.6, edge.4, edge.3 and edge.2 
+Mesh was successfully written to hd.msh.
+Command> END
+/ File closed at Sun Jan 09 21:41:12 2005, 0.13 cpu second(s), 3185000 maximum memory.
+Total of 0.16 cpu second(s), 3185000 maximum memory.
