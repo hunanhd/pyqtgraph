@@ -30,9 +30,12 @@ def main():
 
     w.show()
 
-    import sys
+    import sys,os
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
-        QtGui.QApplication.instance().exec_()  # Start Qt event loop unless running in interactive mode or using pyside.
+       if not QtGui.QApplication.instance().exec_():
+           if global_inst.mw_.fltIsStart:
+               os.system('taskkill /f /im fl6326s.exe')
+
 
 
 if __name__ == '__main__':

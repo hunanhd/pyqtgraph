@@ -1,6 +1,6 @@
 / Journal File for GAMBIT 2.4.6, Database 2.4.4, ntx86 SP2007051421
 / Identifier "hd"
-/ File opened for write Sun Jan 09 21:41:11 2005.
+/ File opened for write Sat Jan 15 09:43:08 2005.
 vertex create coordinates 60 3 0
 vertex create coordinates 110 3 0
 vertex create coordinates 110 0 0
@@ -20,4 +20,4 @@ face mesh "face.1" submap size 1
 physics create "inlet" btype "VELOCITY_INLET" edge "edge.5"
 physics create "outlet" btype "OUTFLOW" edge "edge.1"
 export fluent5 "hd.msh" nozval
-/ File closed at Sun Jan 09 21:41:12 2005, 0.13 cpu second(s), 3185000 maximum memory.
+/ File closed at Sat Jan 15 09:43:09 2005, 0.13 cpu second(s), 3185000 maximum memory.

@@ -8,6 +8,8 @@ from graphicswindow import GraphicsWindow
 import global_inst
 import sdi_rc
 
+import win32api,threading,os
+
 class MainWindow(QtGui.QMainWindow):
     def __init__(self, fileName=None):
         super(MainWindow, self).__init__()
@@ -39,6 +41,11 @@ class MainWindow(QtGui.QMainWindow):
 
     # def test(self):
     #     global_inst.win_.vb.removeSelect()
+
+    def closeApp(self):
+        QtGui.qApp.closeAllWindows()
+        if self.fltIsStart:
+            os.system('taskkill /f /im fl6326s.exe')
 
     def methodChoose(self):
         mtd = VMethodDlg()
@@ -139,9 +146,7 @@ class MainWindow(QtGui.QMainWindow):
         msg.setText(str)
         msg.exec_()
 
-    def startFluent(self):
-        import win32api,os,time
-        # if os.path.exists('./scm/hd.msh') is False:
+    def startGambit(self):
         delfiles = []
         for parent,dirname,filename in os.walk("."):
             for f in filename:
@@ -156,12 +161,15 @@ class MainWindow(QtGui.QMainWindow):
                 pass
 
         win32api.ShellExecute(0,'open','C:/Fluent.Inc/ntbin/ntx86/gambit.exe','-r2.4.6 -id "hd" -inputfile "writed.jou"' ,'./scm',1)
-        time.sleep(0.01)
+
+    def startFluent(self):
+        # if os.path.exists('./scm/hd.msh') is False:
+        t = threading.Timer(1,self.startGambit)
+        t.start()
         handle = win32api.ShellExecute(0,'open','C:/Fluent.Inc/ntbin/ntx86/fluent.exe','-r6.3.26 2d -i "load.scm"' ,'./scm',1)
         if handle:
             self.fltIsStart = True
     def endFluent(self):
-        import os
         if self.fltIsStart:
             os.system('taskkill /f /im fl6326s.exe')
             self.fltIsStart = False
@@ -238,7 +246,7 @@ class MainWindow(QtGui.QMainWindow):
 
         self.exitAct = QtGui.QAction(self.tr("E&xit"), self, shortcut="Ctrl+Q",
                                      statusTip=self.tr("Exit the application"),
-                                     triggered=QtGui.qApp.closeAllWindows)
+                                     triggered=self.closeApp)
 
         self.cutAct = QtGui.QAction(QtGui.QIcon(':/images/cut.png'), self.tr("Cu&t"),
                                     self, enabled=False, shortcut=QtGui.QKeySequence.Cut,
