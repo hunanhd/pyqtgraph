@@ -1,0 +1,31 @@
+﻿在开发的过程中可能会修改pyqtgraph的源代码，为了便于修改对源代码布局进行了微调
+
+1、卸载系统中通过exe安装的pyqtgraph库（控制面板-->卸载程序-->pyqtgraph）
+
+2、在github上将pyqtgraph的官方仓库fork到自己的github中
+pyqtgraph官方仓库：https://github.com/pyqtgraph/pyqtgraph，点击“Fork”按钮
+
+3、将fork后的pyqgraph仓库clone到本地
+例如: git clone git@github.com:xxx/pyqtgraph.git
+注：在git bash中可发现当前的分支是develop
+
+4、按照“[参考资料]在Python中添加自定义模块.txt”的说明添加*.pth文件
+     用于指定pyqtgraph库的搜索路径，并测试pyqtgraph能否正确找到
+
+5、用git命令或者git gui新建分支t-ids
+git命令新建并切换分支： git checkout -b t-ids
+注：当前的分支切换到t-ids了
+
+6、修改.gitignore文件，将原来hunanhd/t-ids.git、pyqtgraph/pyqtgraph.git的.gitignore文件的内容合并在一起，并添加
+*.pyc
+*.pyw
+*.pyo
+注: 经过处理之后, t-ids分支的.gitignore是最新最全的
+
+7、新建app文件夹，并添加代码t-ids.py，启动app的开发工作
+注1：以后的开发就可以在app文件夹中进行
+注2：修改pyqtgraph的源代码也很方便，直接去pyqtgraph文件夹下修改就可以了
+
+8、代码和文档的编写尽量要使用utf-8编码
+注1：可以使用sublime text2的GBK Encoding插件(File-->GBK or UTF8)
+注2：git中文乱码参考"[新增]Windows下git中文乱码解决方法.txt"

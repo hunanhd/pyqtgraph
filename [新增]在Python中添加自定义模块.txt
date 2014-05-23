@@ -1,0 +1,33 @@
+[参考资料]
+在Python中添加自定义模块
+http://www.linuxidc.com/Linux/2011-07/38078.htm
+
+一般来说，我们会将自己写的python模块与python自带的模块分开存放以达到便于维护的目的。
+
+Python 运行环境在查找库文件时是对 sys.path 列表进行遍历，如果我们想在运行环境中注册新的类库，主要有以下三种方法：
+
+在sys.path列表中添加新的路径。
+
+设置PYTHONPATH环境变量。
+
+将库文件复制到sys.path列表中的目录里（如site-packages目录）。
+
+其实，最简单的办法是用 .pth 文件来实现。Python 在遍历已知的库文件目录过程中，如果见到一个 .pth 文件，就会将文件中所记录的路径加入到 sys.path 设置中，这样 .pth 文件说指明的库也就可以被 Python 运行环境找到。
+
+操作：
+
+在Python/Lib/site-package目录下创建一个MyModule.pth文件，其中内容为自定义的模块所在的路径。
+
+Config代码 
+
+C:\Project
+
+C:\Project 这样Project目录下的python文件就可以被找到了。
+
+[操作过程]
+ {PYTHON-HOME}\lib\site-packages 中新建一个 .pth 文件，文件内容为包根路径，假设包的根目录为 d:/py/mytest/，
+ 则可以在 {PYTHON-HOME}\lib\site-packages 目录下建一个 pyqtgraph.pth 的文件，内容为 pyqtgraph的路径
+例如: C:\develop\Test\GitProject\pyqtgraph
+
+[测试]
+测试一下example文件夹下的例子能否正常运行，命令行cd到example的路径下，执行: python plotting.py

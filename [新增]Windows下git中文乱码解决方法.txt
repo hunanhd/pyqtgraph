@@ -1,0 +1,36 @@
+[git初始设置]
+安装完git之后要设置user和email
+打开git bash
+git config --global user.name xxx
+git config --global user.email xxx@xxx.com
+
+[msysgit中文乱码问题]
+假设git安装目录：$Git_Root = C:\develop\Tool\Git
+则git的所有配置文件都在$Git_Root\etc路径下
+
+1、inputrc
+set meta-flag on
+set input-meta on
+set output-meta on
+set convert-meta off
+
+2、gitconfig
+添加
+[core]
+autoctrlf = true
+
+删除
+[i18n]
+
+3、git-completion.bash
+末尾添加
+alias ls='ls --show-control-chars --color=auto'
+
+4、profile
+搜索utf-8
+export LESSCHARSET=utf-8
+
+5、Git Gui中查看UTF-8编码的文本文件时乱码
+在Bash提示符下输入：git config --global gui.encoding utf-8
+
+注：通过上述设置，UTF-8编码的文本文件可以正常查看，但是GBK编码的文件将会乱码，所以还是没有从根本上解决问题。可行的方法之一为：将所有文本文件的编码统一为UTF-8
