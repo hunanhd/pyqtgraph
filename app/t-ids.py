@@ -163,79 +163,93 @@ class MainWindow(QtGui.QMainWindow):
 
 class GraphicsWindow(pg.GraphicsLayoutWidget):
 
-    def __init__(self, title=None, size=(800, 600), **kargs):
-        # mkQApp()
-        super(GraphicsWindow, self).__init__(**kargs)
-        self.modes = ['InsertTunnel', 'NoMode']
-        self.mode = 'NoMode'
-        self.resize(*size)
-        if title is not None:
-            self.setWindowTitle(title)
-        self.vb = self.addViewBox()
-        self.mw = None
+	def __init__(self, title=None, size=(800, 800), **kargs):
+		# mkQApp()
+		super(GraphicsWindow, self).__init__(**kargs)
+		self.modes = ['InsertTunnel', 'NoMode']
+		self.mode = 'NoMode'
+		self.resize(*size)
+		if title is not None:
+			self.setWindowTitle(title)
+		self.vb = self.addViewBox()
+		self.vb.setAutoVisible(False)
+		#self.vb.setBackgroundColor(QtCore.Qt.White)
+		self.mw = None
 
-        self.vLine = pg.InfiniteLine(angle=90, movable=False)
-        self.hLine = pg.InfiniteLine(angle=0, movable=False)
-        self.vb.addItem(self.vLine, ignoreBounds=True)
-        self.vb.addItem(self.hLine, ignoreBounds=True)
+		self.vLine = pg.InfiniteLine(angle=90, movable=False)
+		self.hLine = pg.InfiniteLine(angle=0, movable=False)
+		self.vb.addItem(self.vLine, ignoreBounds=True)
+		self.vb.addItem(self.hLine, ignoreBounds=True)
 
-        self.proxy = pg.SignalProxy(
-            self.vb.scene().sigMouseMoved, rateLimit=60, slot=self.scenemouseMoved)
-        self.vb.scene().sigMouseClicked.connect(self.scenemousePressed)
+		self.proxy = pg.SignalProxy(
+			self.vb.scene().sigMouseMoved, rateLimit=60, slot=self.scenemouseMoved)
+		self.vb.scene().sigMouseClicked.connect(self.scenemousePressed)
 
-    def setMode(self):
-        self.mode = 'InsertTunnel'
+	def setMode(self):
+		self.mode = 'InsertTunnel'
 
-    def setMainWindow(self, mw):
-        self.mw = mw
+	def setMainWindow(self, mw):
+		self.mw = mw
 
-    def scenemouseMoved(self, evt):
-        # using signal proxy turns original arguments into a tuple
-        pos = evt[0]
-        if self.vb.sceneBoundingRect().contains(pos):
-            mousePoint = self.vb.mapSceneToView(pos)
-            self.msg = "x=%0.1f,y=%0.1f" % (mousePoint.x(), mousePoint.y())
-            self.mw.statusBar().showMessage(self.msg)
-            self.vLine.setPos(mousePoint.x())
-            self.hLine.setPos(mousePoint.y())
-            self.vb.scene().update()
+	def scenemouseMoved(self, evt):
+		# using signal proxy turns original arguments into a tuple
+		pos = evt[0]
+		if self.vb.sceneBoundingRect().contains(pos):
+			mousePoint = self.vb.mapSceneToView(pos)
+			self.msg = "x=%0.1f,y=%0.1f" % (mousePoint.x(), mousePoint.y())
+			self.mw.statusBar().showMessage(self.msg)
+			self.vLine.setPos(mousePoint.x())
+			self.hLine.setPos(mousePoint.y())
+			self.vb.scene().update()
 
-    def caclFourPts(self, pt, l, h):
-        fourPts = [pt]
-        fourPts.append(QtCore.QPointF(pt.x() + l, pt.y()))
-        fourPts.append(QtCore.QPointF(pt.x() + l, pt.y() + h))
-        fourPts.append(QtCore.QPointF(pt.x(), pt.y() + h))
-        return fourPts
+	def caclTunPts(self, pt, l, h):
+		fourPts = [pt]
+		fourPts.append(QtCore.QPointF(pt.x() + l, pt.y()))
+		fourPts.append(QtCore.QPointF(pt.x() + l, pt.y() + h))
+		fourPts.append(QtCore.QPointF(pt.x(), pt.y() + h))
+		fourPts.append(QtCore.QPointF(pt.x(), pt.y() + 3*h))
+		fourPts.append(QtCore.QPointF(pt.x(), pt.y() - 2*h))
+		fourPts.append(QtCore.QPointF(pt.x() - h, pt.y() + 3*h))
+		fourPts.append(QtCore.QPointF(pt.x() - h, pt.y() - 2*h))
+		return fourPts
 
-    def scenemousePressed(self, evt):
-        if evt.buttons() & QtCore.Qt.LeftButton and self.mode == 'InsertTunnel':
-            mousePt = self.vb.mapSceneToView(evt.scenePos())
-            fourPts = self.caclFourPts(mousePt, 100, 30)
-            t1 = Tunnel(fourPts[0], fourPts[1])
-            t2 = Tunnel(fourPts[1], fourPts[2])
-            t3 = Tunnel(fourPts[2], fourPts[3])
-            self.vb.addItem(t1)
-            self.vb.addItem(t2)
-            self.vb.addItem(t3)
-            self.vb.scene().update()
-            # ra = pg.PolyLineROI([[0,40], [100,40], [100,0], [0,0]], closed=False)
-            # self.vb.addItem(ra)
-        self.mode = 'NoMode'
-        evt.accept()
+	def scenemousePressed(self, evt):
+		if evt.buttons() & QtCore.Qt.LeftButton and self.mode == 'InsertTunnel':
+			mousePt = self.vb.mapSceneToView(evt.scenePos())
+			fourPts = self.caclTunPts(mousePt, 100, 30)
+			for i in range(0,4):
+				self.vb.addItem(Tunnel(fourPts[i], fourPts[i+1]))
+			self.vb.addItem(Tunnel(fourPts[6], fourPts[7]))
+			self.vb.addItem(Tunnel(fourPts[0], fourPts[5]))
+			# t1 = Tunnel(fourPts[0], fourPts[1])
+			# t2 = Tunnel(fourPts[1], fourPts[2])
+			# t3 = Tunnel(fourPts[2], fourPts[3])
+			# t4 = Tunnel(fourPts[2], fourPts[3])
+			# t3 = Tunnel(fourPts[2], fourPts[3])
+			# t3 = Tunnel(fourPts[2], fourPts[3])
+			# self.vb.addItem(t1)
+			# self.vb.addItem(t2)
+			# self.vb.addItem(t3)
+			self.vb.scene().update()
+			# ra = pg.PolyLineROI([[0,40], [100,40], [100,0], [0,0]], closed=False)
+			# self.vb.addItem(ra)
+		self.mode = 'NoMode'
+		evt.accept()
 
 
 class Tunnel(pg.GraphicsObject):
     sigClicked = QtCore.Signal(object)
 
     def __init__(self, start, end):
-        pg.GraphicsObject.__init__(self)
-        self.start = start
-        self.end = end
+		pg.GraphicsObject.__init__(self)
+		self.start = start
+		self.end = end
+		#self.setBounds(QtCore.QRectF(0,0,120,80).normalized())
         
     def paint(self, p, *args):
         p.setRenderHint(p.Antialiasing)
         p.setPen(
-            QtGui.QPen(QtCore.Qt.green, 0, QtCore.Qt.SolidLine, QtCore.Qt.SquareCap))
+            QtGui.QPen(QtCore.Qt.green, 1, QtCore.Qt.SolidLine, QtCore.Qt.SquareCap))
         p.drawLine(self.start, self.end)
 
     def mouseDoubleClickEvent(self, evt):
@@ -247,7 +261,8 @@ class Tunnel(pg.GraphicsObject):
         pass
 
     def boundingRect(self):
-        return QtCore.QRectF(self.start, QtCore.QPointF(self.start.x() + 100, self.start.y() + 30))
+        # return QtCore.QRectF(self.start, QtCore.QPointF(self.start.x() + 100, self.start.y() + 30)).normalized()
+		return QtCore.QRectF(0,0,120,80).normalized()
 
 app = QtGui.QApplication([])
 mainWindow = MainWindow()
