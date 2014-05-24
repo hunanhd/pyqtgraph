@@ -180,8 +180,8 @@ class GraphicsWindow(pg.GraphicsLayoutWidget):
         self.vb.addItem(self.hLine, ignoreBounds=True)
 
         self.proxy = pg.SignalProxy(
-            self.vb.scene().sigMouseMoved, rateLimit=60, slot=self.sceneMouseMoved)
-        self.vb.scene().sigMouseClicked.connect(self.sceneMousePressed)
+            self.vb.scene().sigMouseMoved, rateLimit=60, slot=self.scenemouseMoved)
+        self.vb.scene().sigMouseClicked.connect(self.scenemousePressed)
 
     def setMode(self):
         self.mode = 'InsertTunnel'
@@ -189,16 +189,15 @@ class GraphicsWindow(pg.GraphicsLayoutWidget):
     def setMainWindow(self, mw):
         self.mw = mw
 
-    def sceneMouseMoved(self, evt):
-        ## using signal proxy turns original arguments into a tuple
+    def scenemouseMoved(self, evt):
+        # using signal proxy turns original arguments into a tuple
         pos = evt[0]
         if self.vb.sceneBoundingRect().contains(pos):
-            self.mousePoint = self.vb.mapSceneToView(pos)
-            self.msg = "x=%0.1f,y=%0.1f" % (
-                self.mousePoint.x(), self.mousePoint.y())
+            mousePoint = self.vb.mapSceneToView(pos)
+            self.msg = "x=%0.1f,y=%0.1f" % (mousePoint.x(), mousePoint.y())
             self.mw.statusBar().showMessage(self.msg)
-            self.vLine.setPos(self.mousePoint.x())
-            self.hLine.setPos(self.mousePoint.y())
+            self.vLine.setPos(mousePoint.x())
+            self.hLine.setPos(mousePoint.y())
             self.vb.scene().update()
 
     def caclFourPts(self, pt, l, h):
@@ -208,14 +207,10 @@ class GraphicsWindow(pg.GraphicsLayoutWidget):
         fourPts.append(QtCore.QPointF(pt.x(), pt.y() + h))
         return fourPts
 
-    def sceneMousePressed(self, evt):
+    def scenemousePressed(self, evt):
         if evt.buttons() & QtCore.Qt.LeftButton and self.mode == 'InsertTunnel':
-            # self.mousePoint = evt.pos()
-            pt = self.vb.mapSceneToView(evt.pos())
-            print evt.pos()
-            print evt.scenePos()
-            print self.vb.mapSceneToView(evt.scenePos())
-            fourPts = self.caclFourPts(pt, 100, 30)
+            mousePt = self.vb.mapSceneToView(evt.scenePos())
+            fourPts = self.caclFourPts(mousePt, 100, 30)
             t1 = Tunnel(fourPts[0], fourPts[1])
             t2 = Tunnel(fourPts[1], fourPts[2])
             t3 = Tunnel(fourPts[2], fourPts[3])
@@ -228,6 +223,7 @@ class GraphicsWindow(pg.GraphicsLayoutWidget):
         self.mode = 'NoMode'
         evt.accept()
 
+
 class Tunnel(pg.GraphicsObject):
     sigClicked = QtCore.Signal(object)
 
@@ -235,7 +231,7 @@ class Tunnel(pg.GraphicsObject):
         pg.GraphicsObject.__init__(self)
         self.start = start
         self.end = end
-
+        
     def paint(self, p, *args):
         p.setRenderHint(p.Antialiasing)
         p.setPen(
@@ -245,13 +241,14 @@ class Tunnel(pg.GraphicsObject):
     def mouseDoubleClickEvent(self, evt):
         # if (evt.pos().x() - self.points[0].x() <= 101 and  math.fabs(evt.pos().y() - self.points[0].y()) <= 2) or\
         # (math.fabs(evt.pos().x() - self.points[1].x()) <= 2 and evt.pos().y() - self.points[1].y() <= 42)\
-                                # or(evt.pos().x() - self.points[3].x() <= 102 and math.fabs(evt.pos().y() - self.points[3].y()) <= 2):
-                # if evt.button() == QtCore.Qt.LeftButton:
+                # or(evt.pos().x() - self.points[3].x() <= 102 and math.fabs(evt.pos().y() - self.points[3].y()) <= 2):
+        # if evt.button() == QtCore.Qt.LeftButton:
         # evt.accept()
         pass
 
     def boundingRect(self):
         return QtCore.QRectF(self.start, QtCore.QPointF(self.start.x() + 100, self.start.y() + 30))
+
 app = QtGui.QApplication([])
 mainWindow = MainWindow()
 
