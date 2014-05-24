@@ -171,13 +171,14 @@ class GraphicsWindow(pg.GraphicsLayoutWidget):
         self.modes = ['InsertTunnel', 'NoMode']
         self.mode = 'NoMode'
         self.resize(*size)
+        self.setBackground((39,40,34))
         if title is not None:
             self.setWindowTitle(title)
         self.vb = self.addViewBox()
         self.vb.disableAutoRange(pg.ViewBox.XYAxes)
         self.vb.setAspectLocked(True,ratio=None)
         # self.vb.setMouseEnabled(False,False)
-        # self.vb.setBackgroundColor('w')
+        # self.vb.setBackgroundColor((39,40,34))
         self.mw = None
         self.axis = Axis(100)
         self.axis.setPos(0,0)
@@ -246,11 +247,19 @@ class Tunnel(pg.GraphicsObject):
         self.end = end
         self.width = 15
 
+    def __repr__(self):
+        return repr((self.start,self.end))
+
     def paint(self, p, *args):
         p.setRenderHint(p.Antialiasing)
         p.setPen(
             QtGui.QPen(QtCore.Qt.green, 0, QtCore.Qt.SolidLine, QtCore.Qt.SquareCap))
         pts = self.caclVector()
+
+        # p.setBrush(QtGui.QBrush((255-39,255-40,255-34)))
+        p.setBrush(QtGui.QBrush(QtGui.QColor(39,40,34)))
+        p.drawPolygon(self.start,pts[0],pts[1],self.end,pts[3],pts[2])
+
 
         lx = min(pts[0].x(),pts[3].x(),pts[2].x(),pts[1].x())
         rx = max(pts[0].x(),pts[3].x(),pts[2].x(),pts[1].x())
@@ -261,7 +270,7 @@ class Tunnel(pg.GraphicsObject):
         p.drawLine(pts[2], pts[3])
         p.setPen(
             QtGui.QPen(QtCore.Qt.red, 1, QtCore.Qt.DotLine, QtCore.Qt.SquareCap))
-        p.drawRect(lx,-ty,rx-lx,ty-dy)
+        # p.drawRect(lx,-ty,rx-lx,ty-dy)
 
     def caclVector(self):
         pts = []
@@ -304,9 +313,11 @@ class TTunnel(Tunnel):
         super(TTunnel, self).__init__(start, end)
 
     def paint(self, p, *args):
+        pts = Tunnel.caclVector(self)
         p.setRenderHint(p.Antialiasing)
         p.setPen(QtGui.QPen(QtCore.Qt.green, 0, QtCore.Qt.SolidLine, QtCore.Qt.SquareCap))
-        pts = Tunnel.caclVector(self)
+        p.setBrush(QtGui.QBrush(QtGui.QColor(39,40,34)))
+        p.drawPolygon(self.start,pts[0],pts[1],self.end,pts[3],pts[2])
         p.drawLine(pts[0], pts[1])
         p.drawLine(pts[2], pts[3])
         p.drawLine(pts[1], pts[3])
@@ -317,7 +328,7 @@ class TTunnel(Tunnel):
         dy = min(pts[0].y(),pts[3].y(),pts[2].y(),pts[1].y())
         p.setPen(
             QtGui.QPen(QtCore.Qt.red, 1, QtCore.Qt.DotLine, QtCore.Qt.SquareCap))
-        p.drawRect(lx,-ty,rx-lx,ty-dy)
+        # p.drawRect(lx,-ty,rx-lx,ty-dy)
         # p.drawRect(self.bound)
         def boundingRect(self):
             pts = self.caclVector()
@@ -410,6 +421,45 @@ class Axis(QtGui.QGraphicsPathItem):
             pad += max(1, pen.width()) * 0.7072
         return pad
 
+class JunctionEdgInfo:
+    def __init__(self, id=None, soe = False, angle = pg.Vector()):
+        self.tunnelId = id
+        self.startOrEnd = soe
+        self.angle = angle
+    def __eq__(self,b):
+        return self.tunnelId == b.tunnelId and self.startOrEnd == b.startOrEnd and self.angle == b.angle
+    def __repr__(self):
+        return repr((self.tunnelId,self.startOrEnd,self.angle))+"\n"
+
+def buildJunctionEdgeInfo(tunnels,pt):
+    ges = []
+    for t in tunnels:
+        info = JunctionEdgInfo()
+        v= pg.Vector(self.end - self.start)
+        v.normalize()
+        if t.start == pt:
+            info.startOrEnd = True
+            info.angle = v
+        elif t.end == pt:
+            info.startOrEnd = False
+            info.angle = -v
+        ges.append(info)
+    return ges
+
+def test2():
+    a = [
+        JunctionEdgInfo(Tunnel(pg.Point(0,1),pg.Point(2,2)),True,pg.Vector(1,-1)),
+        JunctionEdgInfo(Tunnel(pg.Point(2,3),pg.Point(3,6)),False,pg.Vector(1,1)),
+        JunctionEdgInfo(Tunnel(pg.Point(10,21),pg.Point(34,12)),True,pg.Vector(-1,-1))
+    ]
+    print a[0].angle.angle(pg.Vector(1,0))
+    print a[1].angle.angle(pg.Vector(1,0))
+    print a[2].angle.angle(pg.Vector(1,0))
+    print dir( pg.Vector(-1,-1))
+    print a
+    # a = sorted(a, key = lambda x: x.angle.angle(pg.Vector(1,0)))
+    a.sort(key = lambda x: x.angle.angle(pg.Vector(1,0)))
+    print a
 
 def test():
     spt = pg.Point(0, 0)
@@ -426,6 +476,7 @@ def test():
     v.normalize()
     print v * 20
     print v
+    print -v
 
 
 def main():
@@ -440,8 +491,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    # main()
     # test()
-
+    test2()
 
 
