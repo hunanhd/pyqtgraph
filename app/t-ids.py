@@ -446,6 +446,30 @@ def buildJunctionEdgeInfo(tunnels,pt):
         ges.append(info)
     return ges
 
+def caclAverageVector2(v1,w1,v2,w2):
+    return (v1 * w2 + v2 * w1)
+
+def dealWithBoundary2(info,junctionPt,v):
+    pass
+
+#至少需要2个元素才能正确的闭合
+def edgeJunctionClosureImpl(junctionPt,ges):
+    if len(ges) == 1:
+        ges.append(ges[0]) #这么构成循环?
+    ges.append(ges[0])
+    v3 = ges[0].angle
+    v3 = v_rotate(v3,90)
+    for i in range(0,len(ges)-1):
+        cv = ges[i].angle.crossProduct(ges[i+1].angle)
+        if cv.length() == 0:
+            v3 = caclAverageVector2(ges[i].angle,1,ges[i+1].angle,1)
+        else:
+            v3 = -v3 #?
+
+def updateEdge(tunnels):
+    pass
+
+
 def test2():
     a = [
         JunctionEdgInfo(Tunnel(pg.Point(0,1),pg.Point(2,2)),True,pg.Vector(1,-1)),
@@ -455,7 +479,7 @@ def test2():
     print a[0].angle.angle(pg.Vector(1,0))
     print a[1].angle.angle(pg.Vector(1,0))
     print a[2].angle.angle(pg.Vector(1,0))
-    print dir( pg.Vector(-1,-1))
+    print dir(pg.Vector(-1,-1))
     print a
     # a = sorted(a, key = lambda x: x.angle.angle(pg.Vector(1,0)))
     a.sort(key = lambda x: x.angle.angle(pg.Vector(1,0)))
@@ -478,7 +502,6 @@ def test():
     print v
     print -v
 
-
 def main():
     app = QtGui.QApplication([])
     mainWindow = MainWindow()
@@ -491,8 +514,8 @@ def main():
 
 
 if __name__ == '__main__':
-    # main()
+    main()
     # test()
-    test2()
+    # test2()
 
 
