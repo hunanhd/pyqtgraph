@@ -81,11 +81,10 @@ class Vector(QtGui.QVector3D):
         ## Probably this should be done with arctan2 instead..
         ang = np.arccos(np.clip(QtGui.QVector3D.dotProduct(self, a) / (n1 * n2), -1.0, 1.0))  ### in radians
 
-        c = self.cross(a)
-        if c > 0:
-            # ang *= -1.
-            ang = np.pi*2 - ang
+        # c = self.cross(a)
+        # if c > 0:
+        #     # ang *= -1.
+        #     ang = np.pi * 2 - ang
         return ang * 180. / np.pi
-
 
         
