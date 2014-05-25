@@ -36,8 +36,7 @@ class MainWindow(QtGui.QMainWindow):
         pass
 
     def newFile(self):
-        self.win.find()
-
+        pass
     def open(self):
         pass
 
@@ -221,33 +220,29 @@ class GraphicsWindow(pg.GraphicsLayoutWidget):
         if evt.buttons() & QtCore.Qt.LeftButton and self.mode == 'InsertTunnel':
             mousePt = self.vb.mapSceneToView(evt.scenePos())
             fourPts = self.caclTunPts(mousePt, 150, 80)
-            t1 = TTunnel(fourPts[0], fourPts[1])
+            # fourPts = self.caclTunPts(pg.Point(0,0), 150, 80)
             t2 = Tunnel(fourPts[0], fourPts[2])
             t3 = Tunnel(fourPts[0], fourPts[3])
-            self.vb.addItem(t1)
+            t1 = Tunnel(fourPts[0], fourPts[1], True)
+
+            # t4 = Tunnel(fourPts[1], fourPts[2])
+            # t5 = Tunnel(fourPts[1], pg.Point(1000,0))
+            # t6 = Tunnel(fourPts[1], fourPts[3])
             self.vb.addItem(t2)
             self.vb.addItem(t3)
+            self.vb.addItem(t1)
+
+            # self.vb.addItem(t4)
+            # self.vb.addItem(t5)
+            # self.vb.addItem(t6)
+            junctionClosure_helper(self.vb, fourPts[1])
+            junctionClosure_helper(self.vb, fourPts[2])
+            junctionClosure_helper(self.vb, fourPts[0])
+            junctionClosure_helper(self.vb, fourPts[3])
+
             self.vb.scene().update()
         self.mode = 'NoMode'
         evt.accept()
-
-    def find(self):
-        fourPts = self.caclTunPts(pg.Point(0,0), 150, 80)
-        t1 = TTunnel(fourPts[0], fourPts[1])
-        t2 = Tunnel(fourPts[0], fourPts[2])
-        # t3 = Tunnel(fourPts[0], fourPts[3])
-        t4 = Tunnel(fourPts[1], fourPts[2])
-        t5 = Tunnel(fourPts[1], fourPts[3])
-        self.vb.addItem(t1)
-        self.vb.addItem(t2)
-        # self.vb.addItem(t3)
-        self.vb.addItem(t4)
-        self.vb.addItem(t5)
-        junctionClosure_helper(self.vb,fourPts[1])
-        # junctionClosure_helper(self.vb,fourPts[2])
-        # junctionClosure_helper(self.vb,fourPts[0])
-
-        self.vb.scene().update()
 
 def vp_add(v, p):
     return pg.Point(v.x() + p.x(), v.y() + p.y())
@@ -258,56 +253,37 @@ def v_rotate(v, angle):
     tr.rotate(-angle)
     return tr.map(v)
 
-def v_angle(a, b):
-    """Returns the angle in degrees between this vector and the vector a."""
-    n1 = a.length()
-    n2 = b.length()
-    if n1 == 0. or n2 == 0.:
-        return None
-    
-    ## Probably this should be done with arctan2 instead..
-    ang1 = np.arccos(np.clip(QtGui.QVector3D.dotProduct(a, b) / (n1 * n2), -1.0, 1.0))  ### in radians
-    # print 'aaa:',a
-    a = v_rotate(a,90)
-    # print 'aaa:',a
-    ang2 = np.arccos(np.clip(QtGui.QVector3D.dotProduct(a, b) / (n1 * n2), -1.0, 1.0))
 
-    # print "ang1:",np.rad2deg(ang1),"ang2:",np.rad2deg(ang2)
-    if ang1 < 0.5*np.pi:
-        if ang2 < 0.5*np.pi:
-            ang = ang1
-        else:
-            ang = 2*np.pi - ang1
-    else:
-        if ang2 < 0.5*np.pi:
-            ang = ang1
-        else:
-            ang = 2*np.pi - ang1
-    print "v_angle:",np.rad2deg(ang)
-    # c = b.cross(a)
-    # print "c:",c
-    # print "ang:",ang
-    # if c > 0:
-    #     # ang *= -1.
-    #     ang = np.pi * 2 - ang
+def cross(b, a):
+    a = pg.Vector(a)
+    b = pg.Vector(b)
+    return b[0] * a[1] - b[1] * a[0]
 
-    return ang * 180. / np.pi
+
+def v_angle(b, a):
+    import math
+
+    return math.atan2(QtGui.QVector3D.dotProduct(QtGui.QVector3D.crossProduct(b, a), QtGui.QVector3D(0, 0, 1)),
+                      QtGui.QVector3D.dotProduct(b, a))
+
 
 class Tunnel(pg.GraphicsObject):
-    def __init__(self, start, end):
+    def __init__(self, start=0, end=0, isTTunnel=False):
         pg.GraphicsObject.__init__(self)
         self.spt = start
         self.ept = end
+        self.isTTunnel = isTTunnel
         self.spt1 = None
         self.spt2 = None
         self.ept1 = None
         self.ept2 = None
         self.width = 15
+        self.bound = None
 
         self.caclVector()
 
     def __repr__(self):
-        return "Tunnel:"+repr((self.spt, self.ept))
+        return "Tunnel:" + repr((self.spt, self.ept))
 
     def paint(self, p, *args):
         p.setRenderHint(p.Antialiasing)
@@ -318,17 +294,13 @@ class Tunnel(pg.GraphicsObject):
         p.setBrush(QtGui.QBrush(QtGui.QColor(39, 40, 34)))
         # p.drawPolygon(self.spt, self.spt2, self.ept2, self.ept, self.ept1, self.spt1)
 
-
-        # lx = min(pts[0].x(),pts[3].x(),pts[2].x(),pts[1].x())
-        # rx = max(pts[0].x(),pts[3].x(),pts[2].x(),pts[1].x())
-        # ty = max(pts[0].y(),pts[3].y(),pts[2].y(),pts[1].y())
-        # dy = min(pts[0].y(),pts[3].y(),pts[2].y(),pts[1].y())
-        #
         p.drawLine(self.spt1, self.ept1)
         p.drawLine(self.spt2, self.ept2)
-        # p.setPen(
-        #     QtGui.QPen(QtCore.Qt.red, 1, QtCore.Qt.DotLine, QtCore.Qt.SquareCap))
-        # p.drawRect(lx,-ty,rx-lx,ty-dy)
+        if self.isTTunnel:
+            p.drawLine(self.ept1, self.ept2)
+        p.setPen(
+            QtGui.QPen(QtCore.Qt.red, 1, QtCore.Qt.DotLine, QtCore.Qt.SquareCap))
+        # p.drawRect(self.bound)
 
     def caclVector(self):
         spt = self.spt
@@ -379,55 +351,17 @@ class Tunnel(pg.GraphicsObject):
     def mouseDoubleClickEvent(self, evt):
         if evt.button() == QtCore.Qt.LeftButton:
             msg = QtGui.QMessageBox()
-            msg.setText("XXXX")
+            # if self.isTTunnel:
+            #     msg.setText("TTunnel")
+            # else:
+            #     msg.setText("VTunnel")
+            msg.setText("VTunnel")
             msg.exec_()
             evt.accept()
 
     def boundingRect(self):
-        # lx = min(pts[0].x(),pts[3].x(),pts[2].x(),pts[1].x())
-        # rx = max(pts[0].x(),pts[3].x(),pts[2].x(),pts[1].x())
-        # ty = max(pts[0].y(),pts[3].y(),pts[2].y(),pts[1].y())
-        # dy = min(pts[0].y(),pts[3].y(),pts[2].y(),pts[1].y())
-        # return QtCore.QRectF(lx,-ty,rx-lx,ty-dy)
-        return QtCore.QRectF(0, 0, 100, 80)
-
-
-class TTunnel(Tunnel):
-    def __init__(self, start, end):
-        super(TTunnel, self).__init__(start, end)
-
-    # def paint(self, p, *args):
-    #     pts = Tunnel.caclVector(self)
-    #     p.setRenderHint(p.Antialiasing)
-    #     p.setPen(QtGui.QPen(QtCore.Qt.green, 0, QtCore.Qt.SolidLine, QtCore.Qt.SquareCap))
-    #     p.setBrush(QtGui.QBrush(QtGui.QColor(39, 40, 34)))
-    #     p.drawPolygon(self.spt, pts[0], pts[1], self.ept, pts[3], pts[2])
-    #     p.drawLine(pts[0], pts[1])
-    #     p.drawLine(pts[2], pts[3])
-    #     p.drawLine(pts[1], pts[3])
-    #
-    #     lx = min(pts[0].x(), pts[3].x(), pts[2].x(), pts[1].x())
-    #     rx = max(pts[0].x(), pts[3].x(), pts[2].x(), pts[1].x())
-    #     ty = max(pts[0].y(), pts[3].y(), pts[2].y(), pts[1].y())
-    #     dy = min(pts[0].y(), pts[3].y(), pts[2].y(), pts[1].y())
-    #     p.setPen(
-    #         QtGui.QPen(QtCore.Qt.red, 1, QtCore.Qt.DotLine, QtCore.Qt.SquareCap))
-    #     # p.drawRect(lx,-ty,rx-lx,ty-dy)
-    #     # p.drawRect(self.bound)
-    #     def boundingRect(self):
-    #         pts = self.caclVector()
-    #         lx = min(pts[0].x(), pts[3].x(), pts[2].x(), pts[1].x())
-    #         rx = max(pts[0].x(), pts[3].x(), pts[2].x(), pts[1].x())
-    #         ty = max(pts[0].y(), pts[3].y(), pts[2].y(), pts[1].y())
-    #         dy = min(pts[0].y(), pts[3].y(), pts[2].y(), pts[1].y())
-    #         return QtCore.QRectF(lx, -ty, rx - lx, ty - dy)
-    #
-    # def mouseDoubleClickEvent(self, evt):
-    #     if evt.button() == QtCore.Qt.LeftButton:
-    #         msg = QtGui.QMessageBox()
-    #         msg.setText("TunnelWK")
-    #         msg.exec_()
-    #         evt.accept()
+        self.bound = QtCore.QRectF(self.spt1, self.ept2)
+        return self.bound
 
 
 class Axis(QtGui.QGraphicsPathItem):
@@ -506,6 +440,7 @@ class Axis(QtGui.QGraphicsPathItem):
             pad += max(1, pen.width()) * 0.7072
         return pad
 
+
 class JunctionEdgInfo:
     def __init__(self, id=None, soe=False, v=pg.Vector()):
         self.tunnel = id
@@ -516,7 +451,7 @@ class JunctionEdgInfo:
         return self.tunnel == b.tunnel and self.startOrEnd == b.startOrEnd and self.v == b.v
 
     def __repr__(self):
-        return "JunctionEdgInfo"+repr((self.tunnel, self.startOrEnd, self.v))
+        return "JunctionEdgInfo" + repr((self.tunnel, self.startOrEnd, self.v))
 
 
 def buildJunctionEdgeInfo(tunnels, pt):
@@ -526,45 +461,36 @@ def buildJunctionEdgeInfo(tunnels, pt):
         info.tunnel = t
         v = pg.Vector(t.ept - t.spt)
         v.normalize()
-        # print "spt--->:",t.spt,"=+=+=+ept--->:",t.ept
         if t.spt == pt:
             info.startOrEnd = True
             info.v = v
         elif t.ept == pt:
             info.startOrEnd = False
             info.v = pg.Vector(-v)
-        # print info.v,"+++>",v_angle(info.v,pg.Vector(1,0))
         ges.append(info)
     return ges
 
+
 #至少需要2个元素才能正确的闭合
 def edgeJunctionClosureImpl(junctionPt, ges):
-    print "buildJunctionEdgeInfo==================================================="
-    f = lambda v1, v2:(v1  + v2 )*(1.0/np.sin(-1*v_angle(v1,v2)))
+    f = lambda v1, v2: (v1 + v2 ) * (1.0 / np.sin(2 * np.pi - v_angle(v1, v2)))
     if len(ges) == 1:
-        ges.append(ges[0])  #这么构成循环?
+        ges.append(ges[0])
     ges.append(ges[0])
-
-    for info in ges:
-        print "info.angle:",v_angle(info.v,pg.Vector(1, 0))
-        print "info.v:",info.v
 
     v3 = ges[0].v
     v3 = v_rotate(v3, 90)
-    for i in range( len(ges) - 1):
-        cv = pg.Vector.crossProduct(ges[i].v,ges[i + 1].v)
-        # print "cv.length:",cv.length()
-        # print "cv.angle:",v_angle(ges[i].v,)
-        # print "cv.angle:",v_angle(ges[i].v,ges[i + 1].v)
+    for i in range(len(ges) - 1):
+        cv = pg.Vector.crossProduct(ges[i].v, ges[i + 1].v)
         if cv.length() != 0:
             v3 = f(ges[i].v, ges[i + 1].v)
-            print "v3:",v3
         else:
             v3 = -v3
-        ges[i].tunnel.dealWithPointBoundary(junctionPt,v3)
-        ges[i+1].tunnel.dealWithPointBoundary(junctionPt,v3)
+        ges[i].tunnel.dealWithPointBoundary(junctionPt, v3)
+        ges[i + 1].tunnel.dealWithPointBoundary(junctionPt, v3)
 
-def findLinesByPoint(vb,pt):
+
+def findLinesByPoint(vb, pt):
     all_items = vb.addedItems
     tunnels = []
     for item in all_items:
@@ -574,23 +500,14 @@ def findLinesByPoint(vb,pt):
     return tunnels
 
 
-def junctionClosure_helper(vb,pt):
-    tunnels = findLinesByPoint(vb,pt)
+def junctionClosure_helper(vb, pt):
+    tunnels = findLinesByPoint(vb, pt)
     ges = buildJunctionEdgeInfo(tunnels, pt)
-    print "len:", len(ges)
-    f = lambda info: v_angle(info.v,pg.Vector(1, 0))
+    f = lambda info: v_angle(info.v, pg.Vector(1, 0))
     if len(ges) > 0:
-        print "befor sort:========================================================"
-        for info in ges:
-            print info.v,"--->",v_angle(info.v,pg.Vector(1,0))
-        ges.sort(key = f)
-        print "after sort:========================================================"
-        for info in ges:
-            print info.v,"--->",v_angle(info.v,pg.Vector(1,0))
-        edgeJunctionClosureImpl(pt,ges)
+        ges.sort(key=f)
+        edgeJunctionClosureImpl(pt, ges)
 
-def testFind():
-    print findLinesByPoint(scene,pg.Point(0,0))
 
 def test2():
     a = [
@@ -605,9 +522,9 @@ def test2():
     # print a
     # print a[0].tunnel.boundingRect()
     # a = sorted(a, key = lambda x: x.angle.angle(pg.Vector(1,0)))
-    f = lambda info: v_angle(info.v,pg.Vector(1, 0))
+    f = lambda info: v_angle(info.v, pg.Vector(1, 0))
     print a
-    a.sort(key = f)
+    a.sort(key=f)
     print a
     print type(a[0])
     print f(a[0])
@@ -622,6 +539,7 @@ def test2():
     #     0].tunnel.ept2
     #
 
+
 def test():
     spt = pg.Point(0, 0)
     ept = pg.Point(1, 1)
@@ -634,9 +552,9 @@ def test():
     line = QtCore.QLineF(spt, ept)
     pt = pg.Point()
 
-    v1 =pg.Vector(-1,1)
-    print "v-->v1:",v_angle(v,v1)
-    print "v1-->v:",v_angle(v1,v)
+    v1 = pg.Vector(-1, 1)
+    print "v-->v1:", v_angle(v, v1)
+    print "v1-->v:", v_angle(v1, v)
     # print line.intersect(QtCore.QLineF(pg.Point(-1, 0), pg.Point(0, -1)), pt)
     # print pt
     # print pg.Vector(spt) + v1
@@ -669,7 +587,6 @@ if __name__ == '__main__':
     # test2()
 
     # testFind()
-    print v_rotate(pg.Vector(-1,0), 90)
 
 
 
