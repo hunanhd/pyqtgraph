@@ -264,6 +264,7 @@ def v_angle(a, b):
     n2 = b.length()
     if n1 == 0. or n2 == 0.:
         return None
+    
     ## Probably this should be done with arctan2 instead..
     ang1 = np.arccos(np.clip(QtGui.QVector3D.dotProduct(a, b) / (n1 * n2), -1.0, 1.0))  ### in radians
     # print 'aaa:',a
