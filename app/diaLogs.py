@@ -12,8 +12,8 @@ class TunnelDlg(QtGui.QDialog):
         self.lenthLabel = QtGui.QLabel(self.tr("Lenth"))
         self.lenthEdit = QtGui.QLineEdit()
 
-        self.widthLabel = QtGui.QLabel(self.tr("Width"))
-        self.widthEdit = QtGui.QLineEdit()
+        self.areaLabel = QtGui.QLabel(self.tr("area"))
+        self.areaEdit = QtGui.QLineEdit()
 
         self.speedLabel = QtGui.QLabel(self.tr("Speed"))
         self.speedEdit = QtGui.QLineEdit()
@@ -27,8 +27,8 @@ class TunnelDlg(QtGui.QDialog):
         self.mainLayout.addWidget(self.lenthLabel, 0, 0)
         self.mainLayout.addWidget(self.lenthEdit, 0, 1)
 
-        self.mainLayout.addWidget(self.widthLabel, 1, 0)
-        self.mainLayout.addWidget(self.widthEdit, 1, 1)
+        self.mainLayout.addWidget(self.areaLabel, 1, 0)
+        self.mainLayout.addWidget(self.areaEdit, 1, 1)
 
         self.mainLayout.addWidget(self.speedLabel, 2, 0)
         self.mainLayout.addWidget(self.speedEdit, 2, 1)
@@ -38,6 +38,12 @@ class TunnelDlg(QtGui.QDialog):
 
         self.mainLayout.addWidget(self.windageLabel, 4, 0)
         self.mainLayout.addWidget(self.windageEdit, 4, 1)
+
+        self.btnBox = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel)
+        self.btnBox.accepted.connect(self.accept)
+        self.btnBox.rejected.connect(self.reject)
+
+        self.mainLayout.addWidget(self.btnBox,5,1)
 
         self.setLayout(self.mainLayout)
         #self.resize(400,300)
@@ -52,14 +58,20 @@ class TTunnelDlg(QtGui.QDialog):
         self.lenthLabel = QtGui.QLabel(self.tr("Lenth"))
         self.lenthEdit = QtGui.QLineEdit()
 
-        self.widthLabel = QtGui.QLabel(self.tr("Width"))
-        self.widthEdit = QtGui.QLineEdit()
+        self.areaLabel = QtGui.QLabel(self.tr("area"))
+        self.areaEdit = QtGui.QLineEdit()
 
         self.mainLayout.addWidget(self.lenthLabel, 0, 0)
         self.mainLayout.addWidget(self.lenthEdit, 0, 1)
 
-        self.mainLayout.addWidget(self.widthLabel, 1, 0)
-        self.mainLayout.addWidget(self.widthEdit, 1, 1)
+        self.mainLayout.addWidget(self.areaLabel, 1, 0)
+        self.mainLayout.addWidget(self.areaEdit, 1, 1)
+
+        self.btnBox = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel)
+        self.btnBox.accepted.connect(self.accept)
+        self.btnBox.rejected.connect(self.reject)
+
+        self.mainLayout.addWidget(self.btnBox,2,1)
 
         self.setLayout(self.mainLayout)
         #self.resize(400,300)
@@ -85,6 +97,12 @@ class VMethodDlg(QtGui.QDialog):
 
         self.mainLayout.addWidget(self.wayLabel,1,0)
         self.mainLayout.addWidget(self.wayCmb,1,1)
+
+        self.btnBox = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel)
+        self.btnBox.accepted.connect(self.accept)
+        self.btnBox.rejected.connect(self.reject)
+
+        self.mainLayout.addWidget(self.btnBox,2,1)
 
         self.setLayout(self.mainLayout)
         #self.resize(400,300)
@@ -130,6 +148,12 @@ class HairDryerDlg(QtGui.QDialog):
         self.mainLayout.addWidget(self.junctionLabel,4,0)
         self.mainLayout.addWidget(self.junctionCmb,4,1)
 
+        self.btnBox = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel)
+        self.btnBox.accepted.connect(self.accept)
+        self.btnBox.rejected.connect(self.reject)
+
+        self.mainLayout.addWidget(self.btnBox,5,1)
+
         self.setLayout(self.mainLayout)
         #self.resize(400,300)
         self.setWindowTitle(self.tr("HairDryerDlg"))
@@ -166,6 +190,12 @@ class WindLibDlg(QtGui.QDialog):
         self.mainLayout.addWidget(self.resFactorLabel,3,0)
         self.mainLayout.addWidget(self.resFactorEdit,3,1)
 
+        self.btnBox = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel)
+        self.btnBox.accepted.connect(self.accept)
+        self.btnBox.rejected.connect(self.reject)
+
+        self.mainLayout.addWidget(self.btnBox,4,1)
+
         self.setLayout(self.mainLayout)
         #self.resize(400,300)
         self.setWindowTitle(self.tr("The Wind Library"))
@@ -193,6 +223,12 @@ class WindCabinetDlg(QtGui.QDialog):
 
         self.mainLayout.addWidget(self.resFactorLabel,2,0)
         self.mainLayout.addWidget(self.resFactorEdit,2,1)
+
+        self.btnBox = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel)
+        self.btnBox.accepted.connect(self.accept)
+        self.btnBox.rejected.connect(self.reject)
+
+        self.mainLayout.addWidget(self.btnBox,3,1)
 
         self.setLayout(self.mainLayout)
         #self.resize(400,300)
@@ -222,6 +258,13 @@ class DrilVentilationDlg(QtGui.QDialog):
         self.mainLayout.addWidget(self.resFactorLabel,2,0)
         self.mainLayout.addWidget(self.resFactorEdit,2,1)
 
+        self.btnBox = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel)
+        self.btnBox.accepted.connect(self.accept)
+        self.btnBox.rejected.connect(self.reject)
+
+        self.mainLayout.addWidget(self.btnBox,3,1)
+
+
         self.setLayout(self.mainLayout)
         #self.resize(400,300)
         self.setWindowTitle(self.tr("The drilling vetilation"))
@@ -249,6 +292,12 @@ class DisconRamDlg(QtGui.QDialog):
 
         self.mainLayout.addWidget(self.resFactorLabel,2,0)
         self.mainLayout.addWidget(self.resFactorEdit,2,1)
+
+        self.btnBox = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel)
+        self.btnBox.accepted.connect(self.accept)
+        self.btnBox.rejected.connect(self.reject)
+
+        self.mainLayout.addWidget(self.btnBox,3,1)
 
         self.setLayout(self.mainLayout)
         #self.resize(400,300)
@@ -299,9 +348,146 @@ class NodeProDlg(QtGui.QDialog):
         #self.resize(400,300)
         self.setWindowTitle(self.tr("The Node Property"))
 
-    def accept(self):
-        print self.temperEdit.getText()
-        QtGui.QDialog.accept()
+class CaclAfterDampDlg(QtGui.QDialog):
+    def __init__(self):
+        super(CaclAfterDampDlg,self).__init__()
+        self.mainLayout = QtGui.QGridLayout()
+
+        self.timeLabel = QtGui.QLabel(self.tr("time"))
+        self.timeEdit = QtGui.QLineEdit()
+
+        self.dynamiteLabel = QtGui.QLabel(self.tr("dynamite"))
+        self.dynamiteEdit = QtGui.QLineEdit()
+
+        self.mainLayout.addWidget(self.timeLabel,0,0)
+        self.mainLayout.addWidget(self.timeEdit,0,1)
+
+        self.mainLayout.addWidget(self.dynamiteLabel,1,0)
+        self.mainLayout.addWidget(self.dynamiteEdit,1,1)
+
+        self.btnBox = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel)
+        self.btnBox.accepted.connect(self.accept)
+        self.btnBox.rejected.connect(self.reject)
+
+        self.mainLayout.addWidget(self.btnBox,2,1)
+
+        self.setLayout(self.mainLayout)
+        #self.resize(400,300)
+        self.setWindowTitle(self.tr("after damp"))
+
+class CaclWindSpeedDlg(QtGui.QDialog):
+    def __init__(self):
+        super(CaclWindSpeedDlg,self).__init__()
+        self.mainLayout = QtGui.QGridLayout()
+
+        self.speedLabel = QtGui.QLabel(self.tr("speed"))
+        self.speedEdit = QtGui.QLineEdit()
+
+        self.mainLayout.addWidget(self.speedLabel,0,0)
+        self.mainLayout.addWidget(self.speedEdit,0,1)
+
+
+        self.btnBox = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel)
+        self.btnBox.accepted.connect(self.accept)
+        self.btnBox.rejected.connect(self.reject)
+
+        self.mainLayout.addWidget(self.btnBox,1,1)
+
+        self.setLayout(self.mainLayout)
+        #self.resize(400,300)
+        self.setWindowTitle(self.tr("wind speed"))
+
+class CaclUnitPowerDlg(QtGui.QDialog):
+    def __init__(self):
+        super(CaclUnitPowerDlg,self).__init__()
+        self.mainLayout = QtGui.QGridLayout()
+
+        self.unitPowerLabel = QtGui.QLabel(self.tr("unitpower"))
+        self.unitPowerEdit = QtGui.QLineEdit("4")
+
+        self.averagePowerLabel = QtGui.QLabel(self.tr("averagePower"))
+        self.averagePowerEdit = QtGui.QLineEdit()
+
+        self.mainLayout.addWidget(self.unitPowerLabel,0,0)
+        self.mainLayout.addWidget(self.unitPowerEdit,0,1)
+
+        self.mainLayout.addWidget(self.averagePowerLabel,1,0)
+        self.mainLayout.addWidget(self.averagePowerEdit,1,1)
+
+
+        self.btnBox = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel)
+        self.btnBox.accepted.connect(self.accept)
+        self.btnBox.rejected.connect(self.reject)
+
+        self.mainLayout.addWidget(self.btnBox,2,1)
+
+        self.setLayout(self.mainLayout)
+        #self.resize(400,300)
+        self.setWindowTitle(self.tr("unit power air volume index"))
+
+class CaclMineHeatDlg(QtGui.QDialog):
+    def __init__(self):
+        super(CaclMineHeatDlg,self).__init__()
+        self.mainLayout = QtGui.QGridLayout()
+
+        self.sumPowerLabel = QtGui.QLabel(self.tr("sumPower"))
+        self.sumPowerEdit = QtGui.QLineEdit()
+
+        self.cpHeatLabel = QtGui.QLabel(self.tr("cpHeat"))
+        self.cpHeatEdit = QtGui.QLineEdit("1.01")
+
+        self.airDensityLabel = QtGui.QLabel(self.tr("airDensity"))
+        self.airDensityEdit = QtGui.QLineEdit("1.2")
+
+        self.temperInLabel = QtGui.QLabel(self.tr("temperatureIn"))
+        self.temperInEdit = QtGui.QLineEdit()
+
+        self.temperOutLabel = QtGui.QLabel(self.tr("temperatureOut"))
+        self.temperOutEdit = QtGui.QLineEdit()
+
+        self.mainLayout.addWidget(self.cpHeatLabel,0,0)
+        self.mainLayout.addWidget(self.cpHeatEdit,0,1)
+
+        self.mainLayout.addWidget(self.airDensityLabel,1,0)
+        self.mainLayout.addWidget(self.airDensityEdit,1,1)
+
+        self.mainLayout.addWidget(self.temperInLabel,2,0)
+        self.mainLayout.addWidget(self.temperInEdit,2,1)
+
+        self.mainLayout.addWidget(self.temperOutLabel,3,0)
+        self.mainLayout.addWidget(self.temperOutEdit,3,1)
+
+        self.btnBox = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel)
+        self.btnBox.accepted.connect(self.accept)
+        self.btnBox.rejected.connect(self.reject)
+
+        self.mainLayout.addWidget(self.btnBox,4,1)
+
+        self.setLayout(self.mainLayout)
+        #self.resize(400,300)
+        self.setWindowTitle(self.tr("mine heat adjustment"))
+
+class CaclWorkerDlg(QtGui.QDialog):
+    def __init__(self):
+        super(CaclWorkerDlg,self).__init__()
+        self.mainLayout = QtGui.QGridLayout()
+
+        self.numWorkerLabel = QtGui.QLabel(self.tr("numWorker"))
+        self.numWorkerEdit = QtGui.QLineEdit()
+
+        self.mainLayout.addWidget(self.numWorkerLabel,0,0)
+        self.mainLayout.addWidget(self.numWorkerEdit,0,1)
+
+
+        self.btnBox = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel)
+        self.btnBox.accepted.connect(self.accept)
+        self.btnBox.rejected.connect(self.reject)
+
+        self.mainLayout.addWidget(self.btnBox,1,1)
+
+        self.setLayout(self.mainLayout)
+        #self.resize(400,300)
+        self.setWindowTitle(self.tr("worker number"))
 
 def main():
     app = QtGui.QApplication([])
@@ -313,11 +499,15 @@ def main():
     d = DisconRamDlg()
     dd = DrilVentilationDlg()
     n = NodeProDlg()
-    print n.temperEdit.text()
-    n.show()
-    print n.temperEdit.text()
-    sys.exit(app.exec_())
-
+    ca = CaclAfterDampDlg()
+    cs = CaclWindSpeedDlg()
+    cu = CaclUnitPowerDlg()
+    cm = CaclMineHeatDlg()
+    if cm.exec_() == 1:
+        print "xxx"
+        # print n.temperEdit.text()
+    return True
+        # sys.exit(app.exec_())
 
 if __name__ == '__main__':
     main()
