@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 from buildfuc import *
 import pyqtgraph as pg
+from PyQt4 import Qt
 
 class Tunnel(pg.GraphicsObject):
     def __init__(self, start=0, end=0, isTTunnel=False):
@@ -51,7 +52,7 @@ class Tunnel(pg.GraphicsObject):
             p.drawLine(self.ept1, self.ept2)
 
         #绘制boundingRect
-        # p.drawRect(self.bound)
+        p.drawRect(self.bound)
 
     def caclVector(self):
         spt = self.spt
@@ -113,7 +114,20 @@ class Tunnel(pg.GraphicsObject):
             evt.accept()
 
     def boundingRect(self):
-        self.bound = QtCore.QRectF(self.spt1, self.ept2)
+        lx0 = qMin(self.spt1.x(),self.spt2.x())
+        lx1 = qMin(self.ept1.x(),self.ept2.x())
+        lx = qMin(lx0,lx1)
+        rx0 = qMax(self.spt1.x(),self.spt2.x())
+        rx1 = qMax(self.ept1.x(),self.ept2.x())
+        rx = qMax(rx0,rx1)
+        #ty是y值最大的点对应的y，但是在scene坐标系中y是相反的，屏幕坐标左上角才是零点
+        ty0 = -qMin(self.spt1.y(),self.spt2.y())
+        ty1 = -qMin(self.ept1.y(),self.ept2.y())
+        ty = qMin(ty0,ty1)
+        dy0 = -qMax(self.spt1.y(),self.spt2.y())
+        dy1 = -qMax(self.ept1.y(),self.ept2.y())
+        dy = qMax(dy0,dy1)
+        self.bound = QtCore.QRectF(lx,ty,lx-rx,ty-dy)
         return self.bound
 
 

@@ -155,7 +155,9 @@ class MainWindow(QtGui.QMainWindow):
         self.editToolBar.addAction(self.copyAct)
         self.editToolBar.addAction(self.pasteAct)
 
-        self.TunnelCmdToolBar = self.addToolBar(self.tr("Draw"))
+        self.TunnelCmdToolBar = QtGui.QToolBar()
+        #把TunnelCmdToolBar加载到窗口的左边，可以移动，但是保存设置问题还没有涉及
+        self.addToolBar(QtCore.Qt.LeftToolBarArea,self.TunnelCmdToolBar)
         self.TunnelCmdToolBar.addAction(self.TunnelCmdAct)
         self.TunnelCmdToolBar.addAction(self.HairDryerCmdAct)
 

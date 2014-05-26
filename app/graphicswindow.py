@@ -3,6 +3,7 @@
 from tidsaxis import *
 from junction import *
 import pyqtgraph as pg
+from hairdryer import HairDryer
 
 class GraphicsWindow(pg.GraphicsLayoutWidget):
     def __init__(self, title=None, size=(800, 800), **kargs):
@@ -67,31 +68,40 @@ class GraphicsWindow(pg.GraphicsLayoutWidget):
         return fourPts
 
     def sceneMousePressed(self, evt):
-        if evt.buttons() & QtCore.Qt.LeftButton and (self.mode == 'InsertTunnel' or self.mode =='InsertHairDryer'):
+        if evt.buttons() & QtCore.Qt.LeftButton:
             mousePt = self.vb.mapSceneToView(evt.scenePos())
             fourPts = self.caclTunPts(mousePt, 150, 80)
-            # fourPts = self.caclTunPts(pg.Point(0,0), 150, 80)
-            t2 = Tunnel(fourPts[0], fourPts[2])
-            t3 = Tunnel(fourPts[0], fourPts[3])
-            t1 = Tunnel(fourPts[0], fourPts[1])
-            t4 = Tunnel(fourPts[1], fourPts[2])
-            t5 = Tunnel(fourPts[1], pg.Point(1000,0))
-            t6 = Tunnel(fourPts[1], fourPts[3])
-            self.vb.addItem(t2)
-            self.vb.addItem(t3)
-            self.vb.addItem(t1)
-            self.vb.addItem(t4)
-            self.vb.addItem(t5)
-            self.vb.addItem(t6)
+            pt = pg.Point(fourPts[0].x(),fourPts[0].y())
 
-            # junctionClosure([t1,t4,t5,t6], fourPts[1])
-            # junctionClosure([t2,t4], fourPts[2])
-            # junctionClosure([t2,t3,t1], fourPts[0])
-            # junctionClosure([t6], fourPts[3])
-            # junctionClosure(self.vb, pg.Point(1000,0))
+            if self.mode == 'InsertTunnel':
+                # fourPts = self.caclTunPts(pg.Point(0,0), 150, 80)
+                t2 = Tunnel(fourPts[0], fourPts[2])
+                t3 = Tunnel(fourPts[0], fourPts[3])
+                t1 = Tunnel(fourPts[0], fourPts[1],True)
+                # t4 = Tunnel(fourPts[1], fourPts[2])
+                # t5 = Tunnel(fourPts[1], pg.Point(1000,0))
+                # t6 = Tunnel(fourPts[1], fourPts[3])
+                self.vb.addItem(t2)
+                self.vb.addItem(t3)
+                self.vb.addItem(t1)
+                # self.vb.addItem(t4)
+                # self.vb.addItem(t5)
+                # self.vb.addItem(t6)
 
-            self.vb.scene().update()
+                # junctionClosure([t1,t4,t5,t6], fourPts[1])
+                # junctionClosure([t2,t4], fourPts[2])
+                # junctionClosure([t2,t3,t1], fourPts[0])
+                # junctionClosure([t6], fourPts[3])
+                # junctionClosure(self.vb, pg.Point(1000,0))
 
+                self.vb.scene().update()
+            if self.mode =='InsertHairDryer':
+                fourPts = self.caclTunPts(pt, 120, 20)
+                h1 = HairDryer(fourPts[0], fourPts[3])
+                h2 = HairDryer(fourPts[0], fourPts[1])
+                self.vb.addItem(h1)
+                self.vb.addItem(h2)
+                self.vb.scene().update()
         self.mode = 'NoMode'
         evt.accept()
 
