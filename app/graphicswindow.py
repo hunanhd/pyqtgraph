@@ -5,7 +5,9 @@ from junction import *
 import pyqtgraph as pg
 from hairdryer import HairDryer
 
-class GraphicsWindow(pg.GraphicsLayoutWidget):
+#直接从GraphicsView派生
+#参考example/Draw.py、GraphicsScene.py、customPlot.py
+class GraphicsWindow(pg.GraphicsView):
     def __init__(self, title=None, size=(800, 800), **kargs):
         super(GraphicsWindow, self).__init__(**kargs)
         self.modes = ['InsertTunnel', 'InsertHairDryer', 'NoMode']
@@ -16,7 +18,10 @@ class GraphicsWindow(pg.GraphicsLayoutWidget):
         if title is not None:
             self.setWindowTitle(title)
 
-        self.vb = self.addViewBox()
+        #原来的GraphicsLayoutWidget.addViewBox会产生多余的QGraphicsRectItem
+        #直接new生成一个ViewBox,添加到当前窗口中
+        self.vb = pg.ViewBox()
+        self.setCentralItem(self.vb)
         self.vb.disableAutoRange(pg.ViewBox.XYAxes)
         self.vb.setAspectLocked(True, ratio=None)
         # self.vb.setMouseEnabled(False,False)
