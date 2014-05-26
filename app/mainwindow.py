@@ -37,9 +37,13 @@ class MainWindow(QtGui.QMainWindow):
         QtGui.QMessageBox.about(self, "About SDI",
                                 "The <b>SDI</b> example demonstrates how to write single "
                                 "document interface applications using Qt.")
+    #修改模式为巷道绘制
+    def setTunnelMode(self):
+        self.win.setTunnelMode()
 
-    def setMode(self):
-        self.win.setMode()
+    #修改模式为风筒布置
+    def setHairDryerMode(self):
+        self.win.setHairDryerMode()
 
     def init(self):
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
@@ -89,11 +93,17 @@ class MainWindow(QtGui.QMainWindow):
                                       statusTip="Paste the clipboard's contents into the current selection", )
         # triggered=self.textEdit.paste
 
-        self.lineCmdAct = QtGui.QAction(
-            QtGui.QIcon(':/images/linepointer.png'), self.tr("Drawline"), self,
-            shortcut="Ctrl+L",
-            statusTip=self.tr("Draw a line"),
-            triggered=self.setMode)
+        self.TunnelCmdAct = QtGui.QAction(
+            QtGui.QIcon(':/images/tunnel.png'), self.tr("DrawTunnel"), self,
+            shortcut="Ctrl+T",
+            statusTip=self.tr("Draw the Tunnel"),
+            triggered=self.setTunnelMode)
+
+        self.HairDryerCmdAct = QtGui.QAction(
+            QtGui.QIcon(':/images/hairdryer.png'), self.tr("DrawHairDryer"), self,
+            shortcut="Ctrl+H",
+            statusTip=self.tr("Draw the HairDryer"),
+            triggered=self.setHairDryerMode)
 
         self.aboutAct = QtGui.QAction("&About", self,
                                       statusTip="Show the application's About box",
@@ -123,8 +133,10 @@ class MainWindow(QtGui.QMainWindow):
 
         self.menuBar().addSeparator()
 
-        self.lineCmdMenu = self.menuBar().addMenu(self.tr("Line"))
-        self.lineCmdMenu.addAction(self.lineCmdAct)
+        self.DrawMenu = self.menuBar().addMenu(self.tr("Draw"))
+        self.DrawMenu.addAction(self.TunnelCmdAct)
+        self.DrawMenu.addAction(self.HairDryerCmdAct)
+
 
         self.menuBar().addSeparator()
 
@@ -143,8 +155,10 @@ class MainWindow(QtGui.QMainWindow):
         self.editToolBar.addAction(self.copyAct)
         self.editToolBar.addAction(self.pasteAct)
 
-        self.lineCmdToolBar = self.addToolBar(self.tr("Line"))
-        self.lineCmdToolBar.addAction(self.lineCmdAct)
+        self.TunnelCmdToolBar = self.addToolBar(self.tr("Draw"))
+        self.TunnelCmdToolBar.addAction(self.TunnelCmdAct)
+        self.TunnelCmdToolBar.addAction(self.HairDryerCmdAct)
+
 
     def createStatusBar(self):
         self.statusBar().showMessage("Ready")

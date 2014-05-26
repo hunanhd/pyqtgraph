@@ -8,18 +8,15 @@ own context menu, and for the menus of its parent items to be automatically
 displayed as well. 
 
 """
-
 from buildfuc import *
 from mainwindow import MainWindow
-
 
 def main():
     app = QtGui.QApplication([])
     mainWindow = MainWindow()
-
     mainWindow.show()
-    import sys
 
+    import sys
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
         QtGui.QApplication.instance().exec_()  # Start Qt event loop unless running in interactive mode or using pyside.
 

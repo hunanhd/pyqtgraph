@@ -29,6 +29,10 @@ def buildJunctionInfo(tunnels, pt):
         elif t.ept == pt:
             info.startOrEnd = False
             info.v = pg.Vector(-v)
+        else:
+            #可能存在巷道的始末点坐标都不等于闭合点的情况
+            #注:有人使用API时故意的给与闭合点不关联的巷道
+            continue
         ges.append(info)
     return ges
 
@@ -52,19 +56,9 @@ def junctionClosureImpl(junctionPt, ges):
         ges[i + 1].tunnel.trimSides(junctionPt, v3)
 
 
-def findTunnelsByPoint(vb, pt):
-    all_items = vb.addedItems
-    tunnels = []
-    for item in all_items:
-        if isinstance(item, Tunnel):
-            if pt == item.spt or pt == item.ept:
-                tunnels.append(item)
-    return tunnels
-
-
-def junctionClosure(vb, pt):
-    #查找闭合点pt关联的所有巷道
-    tunnels = findTunnelsByPoint(vb, pt)
+#修改函数,去掉vb参数
+#注:巷道闭合的处理与巷道的查找应该属于不同的模块
+def junctionClosure(tunnels, pt):
     #构造闭合点信息数组ges
     ges = buildJunctionInfo(tunnels, pt)
     if len(ges) > 0:

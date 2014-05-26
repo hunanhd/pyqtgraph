@@ -7,7 +7,7 @@ import pyqtgraph as pg
 class GraphicsWindow(pg.GraphicsLayoutWidget):
     def __init__(self, title=None, size=(800, 800), **kargs):
         super(GraphicsWindow, self).__init__(**kargs)
-        self.modes = ['InsertTunnel', 'NoMode']
+        self.modes = ['InsertTunnel', 'InsertHairDryer', 'NoMode']
         self.mode = 'NoMode'
 
         self.resize(*size)
@@ -37,8 +37,11 @@ class GraphicsWindow(pg.GraphicsLayoutWidget):
             self.vb.scene().sigMouseMoved, rateLimit=60, slot=self.sceneMouseMoved)
         self.vb.scene().sigMouseClicked.connect(self.sceneMousePressed)
 
-    def setMode(self):
+    def setTunnelMode(self):
         self.mode = 'InsertTunnel'
+
+    def setHairDryerMode(self):
+        self.mode = 'InsertHairDryer'
 
     def setMainWindow(self, mw):
         self.mw = mw
@@ -62,7 +65,7 @@ class GraphicsWindow(pg.GraphicsLayoutWidget):
         return fourPts
 
     def sceneMousePressed(self, evt):
-        if evt.buttons() & QtCore.Qt.LeftButton and self.mode == 'InsertTunnel':
+        if evt.buttons() & QtCore.Qt.LeftButton and (self.mode == 'InsertTunnel' or self.mode =='InsertHairDryer'):
             mousePt = self.vb.mapSceneToView(evt.scenePos())
             fourPts = self.caclTunPts(mousePt, 150, 80)
             # fourPts = self.caclTunPts(pg.Point(0,0), 150, 80)
@@ -83,6 +86,7 @@ class GraphicsWindow(pg.GraphicsLayoutWidget):
             junctionClosure(self.vb, fourPts[2])
             junctionClosure(self.vb, fourPts[0])
             junctionClosure(self.vb, fourPts[3])
+            junctionClosure(self.vb, pg.Point(1000,0))
 
             self.vb.scene().update()
 
