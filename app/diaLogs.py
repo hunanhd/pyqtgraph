@@ -313,9 +313,7 @@ def main():
     d = DisconRamDlg()
     dd = DrilVentilationDlg()
     n = NodeProDlg()
-    print n.temperEdit.text()
     n.show()
-    print n.temperEdit.text()
     sys.exit(app.exec_())
 
 
