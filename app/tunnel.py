@@ -1,7 +1,6 @@
 # -*- coding:utf-8 -*-
 from buildfuc import *
 import pyqtgraph as pg
-from PyQt4 import Qt
 
 class Tunnel(pg.GraphicsObject):
     def __init__(self, start=0, end=0, isTTunnel=False):
@@ -52,7 +51,7 @@ class Tunnel(pg.GraphicsObject):
             p.drawLine(self.ept1, self.ept2)
 
         #绘制boundingRect
-        p.drawRect(self.bound)
+        # p.drawRect(self.bound)
 
     def caclVector(self):
         spt = self.spt
@@ -105,29 +104,30 @@ class Tunnel(pg.GraphicsObject):
     def mouseDoubleClickEvent(self, evt):
         if evt.button() == QtCore.Qt.LeftButton:
             msg = QtGui.QMessageBox()
-            # if self.isTTunnel:
-            #     msg.setText("TTunnel")
-            # else:
-            #     msg.setText("VTunnel")
-            msg.setText("VTunnel")
+            if self.isTTunnel:
+                msg.setText("TTunnel")
+            else:
+                msg.setText("VTunnel")
+            # msg.setText("VTunnel")
             msg.exec_()
             evt.accept()
 
     def boundingRect(self):
-        lx0 = qMin(self.spt1.x(),self.spt2.x())
-        lx1 = qMin(self.ept1.x(),self.ept2.x())
-        lx = qMin(lx0,lx1)
-        rx0 = qMax(self.spt1.x(),self.spt2.x())
-        rx1 = qMax(self.ept1.x(),self.ept2.x())
-        rx = qMax(rx0,rx1)
-        #ty是y值最大的点对应的y，但是在scene坐标系中y是相反的，屏幕坐标左上角才是零点
-        ty0 = -qMin(self.spt1.y(),self.spt2.y())
-        ty1 = -qMin(self.ept1.y(),self.ept2.y())
-        ty = qMin(ty0,ty1)
-        dy0 = -qMax(self.spt1.y(),self.spt2.y())
-        dy1 = -qMax(self.ept1.y(),self.ept2.y())
-        dy = qMax(dy0,dy1)
-        self.bound = QtCore.QRectF(lx,ty,lx-rx,ty-dy)
+        #lx是x值最小的点对应的x(左边的x)
+        lx0 = min(self.spt1.x(),self.spt2.x())
+        lx1 = min(self.ept1.x(),self.ept2.x())
+        lx = min(lx0,lx1)
+        rx0 = max(self.spt1.x(),self.spt2.x())
+        rx1 = max(self.ept1.x(),self.ept2.x())
+        rx = max(rx0,rx1)
+        #ty是y值最小的点对应的y(上部的y)
+        ty0 = min(self.spt1.y(),self.spt2.y())
+        ty1 = min(self.ept1.y(),self.ept2.y())
+        ty = min(ty0,ty1)
+        dy0 = max(self.spt1.y(),self.spt2.y())
+        dy1 = max(self.ept1.y(),self.ept2.y())
+        dy = max(dy0,dy1)
+        self.bound = QtCore.QRectF(lx,ty,rx-lx,-ty+dy)
         return self.bound
 
 

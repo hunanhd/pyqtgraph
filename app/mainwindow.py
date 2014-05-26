@@ -6,6 +6,7 @@ from graphicswindow import GraphicsWindow
 
 import sdi_rc
 
+
 class MainWindow(QtGui.QMainWindow):
     #sequenceNumber = 1
 
@@ -33,10 +34,23 @@ class MainWindow(QtGui.QMainWindow):
     def saveAs(self):
         pass
 
+    def printfile(self):
+        # printer = QtGui.QPrinter()
+        # dialog = QtGui.QPrintDialog(printer, self)
+        # if (dialog.exec_() != QtGui.QDialog.Accepted):
+        #     return
+        # painter = QtGui.QPainter(printer)
+        # self.win.setBackground('w')
+        # self.win.vb.setBackground('w')
+        # self.win.render(painter)
+        # painter.end()
+        pass
+
     def about(self):
         QtGui.QMessageBox.about(self, "About SDI",
                                 "The <b>SDI</b> example demonstrates how to write single "
                                 "document interface applications using Qt.")
+
     #修改模式为巷道绘制
     def setTunnelMode(self):
         self.win.setTunnelMode()
@@ -71,6 +85,10 @@ class MainWindow(QtGui.QMainWindow):
                                        statusTip="Save the document under a new name",
                                        triggered=self.saveAs)
 
+        self.printAct = QtGui.QAction(QtGui.QIcon(':/images/fileprint.png'),
+                                      "print...", self, shortcut="Ctrl+P",
+                                      statusTip="Print the file", triggered=self.printfile)
+
         self.closeAct = QtGui.QAction("&Close", self, shortcut="Ctrl+W",
                                       statusTip="Close this window", triggered=self.close)
 
@@ -92,6 +110,29 @@ class MainWindow(QtGui.QMainWindow):
                                       "&Paste", self, shortcut=QtGui.QKeySequence.Paste,
                                       statusTip="Paste the clipboard's contents into the current selection", )
         # triggered=self.textEdit.paste
+
+        self.methodAct = QtGui.QAction("&method", self,
+                                      statusTip="Choose method", triggered=self.open)
+
+        self.wayAct = QtGui.QAction("&way", self,
+                                      statusTip="Choose way", triggered=self.open)
+        self.tunnelProAct = QtGui.QAction("&tunnelPro", self,
+                                      statusTip="tunnelPro", triggered=self.open)
+        self.hairDryerProAct = QtGui.QAction("&hairDryerPro", self,
+                                      statusTip="hairDryerPro", triggered=self.open)
+        self.windLibAct = QtGui.QAction("&windLib", self,
+                                      statusTip="windLibAct", triggered=self.open)
+        self.windCabinetAct = QtGui.QAction("&windCabinet", self,
+                                      statusTip="windCabinet", triggered=self.open)
+        self.discontinusRamAct = QtGui.QAction("&discontinusRam", self,
+                                      statusTip="discontinusRam", triggered=self.open)
+        self.seriesFanAct = QtGui.QAction("&seriesFan", self,
+                                      statusTip="seriesFan", triggered=self.open)
+        self.drillingVentAct = QtGui.QAction("&drillingVent", self,
+                                      statusTip="drillingVent", triggered=self.open)
+        self.nodeProAct = QtGui.QAction("&nodePro", self,
+                                      statusTip="nodePro", triggered=self.open)
+
 
         self.TunnelCmdAct = QtGui.QAction(
             QtGui.QIcon(':/images/tunnel.png'), self.tr("DrawTunnel"), self,
@@ -123,6 +164,8 @@ class MainWindow(QtGui.QMainWindow):
         self.fileMenu.addAction(self.saveAct)
         self.fileMenu.addAction(self.saveAsAct)
         self.fileMenu.addSeparator()
+        self.fileMenu.addAction(self.printAct)
+        self.fileMenu.addSeparator()
         self.fileMenu.addAction(self.closeAct)
         self.fileMenu.addAction(self.exitAct)
 
@@ -137,6 +180,19 @@ class MainWindow(QtGui.QMainWindow):
         self.DrawMenu.addAction(self.TunnelCmdAct)
         self.DrawMenu.addAction(self.HairDryerCmdAct)
 
+        self.menuBar().addSeparator()
+
+        self.paramMenu = self.menuBar().addMenu(self.tr("Parameter"))
+        self.paramMenu.addAction(self.methodAct)
+        self.paramMenu.addAction(self.wayAct)
+        self.paramMenu.addAction(self.tunnelProAct)
+        self.paramMenu.addAction(self.hairDryerProAct)
+        self.paramMenu.addAction(self.windLibAct)
+        self.paramMenu.addAction(self.windCabinetAct)
+        self.paramMenu.addAction(self.discontinusRamAct)
+        self.paramMenu.addAction(self.seriesFanAct)
+        self.paramMenu.addAction(self.drillingVentAct)
+        self.paramMenu.addAction(self.nodeProAct)
 
         self.menuBar().addSeparator()
 
@@ -149,17 +205,20 @@ class MainWindow(QtGui.QMainWindow):
         self.fileToolBar.addAction(self.newAct)
         self.fileToolBar.addAction(self.openAct)
         self.fileToolBar.addAction(self.saveAct)
+        self.fileToolBar.addAction(self.printAct)
 
-        self.editToolBar = self.addToolBar("Edit")
+        #把editToolBar加载到窗口的右边，可以移动，但是保存设置问题还没有涉及
+        self.editToolBar = QtGui.QToolBar("Edit")
+        self.addToolBar(QtCore.Qt.RightToolBarArea, self.editToolBar)
         self.editToolBar.addAction(self.cutAct)
         self.editToolBar.addAction(self.copyAct)
         self.editToolBar.addAction(self.pasteAct)
 
-        self.TunnelCmdToolBar = QtGui.QToolBar()
-        #把TunnelCmdToolBar加载到窗口的左边，可以移动，但是保存设置问题还没有涉及
-        self.addToolBar(QtCore.Qt.LeftToolBarArea,self.TunnelCmdToolBar)
-        self.TunnelCmdToolBar.addAction(self.TunnelCmdAct)
-        self.TunnelCmdToolBar.addAction(self.HairDryerCmdAct)
+        self.drawToolBar = QtGui.QToolBar("Draw")
+        #把drawToolBar加载到窗口的左边，可以移动，但是保存设置问题还没有涉及
+        self.addToolBar(QtCore.Qt.LeftToolBarArea, self.drawToolBar)
+        self.drawToolBar.addAction(self.TunnelCmdAct)
+        self.drawToolBar.addAction(self.HairDryerCmdAct)
 
 
     def createStatusBar(self):

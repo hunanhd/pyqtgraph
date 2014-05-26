@@ -13,6 +13,7 @@ class HairDryer(Tunnel):
         self.ept2 = None
         self.width = 2
         self.caclVector()
+
     def paint(self, p, *args):
         #设置画笔为NoPen,即不绘制多边形的边框(border)
         p.setPen(QtCore.Qt.NoPen)
@@ -26,6 +27,12 @@ class HairDryer(Tunnel):
         p.setPen(QtGui.QPen(QtCore.Qt.red, 0, QtCore.Qt.SolidLine, QtCore.Qt.SquareCap))
 
         p.drawLine(self.spt1, self.ept1)
-
-        #用绿色实线绘制spt2-->ept2这条线
         p.drawLine(self.spt2, self.ept2)
+
+    def mouseDoubleClickEvent(self, evt):
+        if evt.button() == QtCore.Qt.LeftButton:
+            msg = QtGui.QMessageBox()
+            msg.setText("HairDryer")
+            msg.exec_()
+            evt.accept()
+

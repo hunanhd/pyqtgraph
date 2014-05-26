@@ -5,8 +5,23 @@ from junction import *
 import pyqtgraph as pg
 from hairdryer import HairDryer
 
+class CustomViewBox(pg.ViewBox):
+    def __init__(self, *args, **kwds):
+        pg.ViewBox.__init__(self, *args, **kwds)
+        self.disableAutoRange(pg.ViewBox.XYAxes)
+        self.setAspectLocked(True, ratio=None)
+        # self.vb.setMouseEnabled(False,False)
+
+    ## reimplement right-click to zoom out
+    def mouseClickEvent(self, ev):
+        pg.ViewBox.mouseClickEvent(self, ev)
+
+    def mouseDragEvent(self, ev):
+        pg.ViewBox.mouseDragEvent(self, ev)
+
 #直接从GraphicsView派生
 #参考example/Draw.py、GraphicsScene.py、customPlot.py
+
 class GraphicsWindow(pg.GraphicsView):
     def __init__(self, title=None, size=(800, 800), **kargs):
         super(GraphicsWindow, self).__init__(**kargs)
@@ -20,11 +35,8 @@ class GraphicsWindow(pg.GraphicsView):
 
         #原来的GraphicsLayoutWidget.addViewBox会产生多余的QGraphicsRectItem
         #直接new生成一个ViewBox,添加到当前窗口中
-        self.vb = pg.ViewBox()
+        self.vb = CustomViewBox()
         self.setCentralItem(self.vb)
-        self.vb.disableAutoRange(pg.ViewBox.XYAxes)
-        self.vb.setAspectLocked(True, ratio=None)
-        # self.vb.setMouseEnabled(False,False)
 
         self.axis = Axis(100)
         self.axis.setPos(0, 0)

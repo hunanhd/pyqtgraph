@@ -11,5 +11,6 @@
         <file>images/fan.png</file>
         <file>images/hairdryer.png</file>
         <file>images/node.png</file>
+        <file>images/fileprint.png</file>
     </qresource>
 </RCC>
