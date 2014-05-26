@@ -3,7 +3,7 @@
 from tunnel import *
 
 class HairDryer(Tunnel):
-    def __init__(self, start, end):
+    def __init__(self, start, end, i):
         super(HairDryer,self).__init__(start, end)
         self.spt = start
         self.ept = end
@@ -12,6 +12,7 @@ class HairDryer(Tunnel):
         self.ept1 = None
         self.ept2 = None
         self.width = 2
+        self.colorindex = i % 8
         self.caclVector()
 
     def paint(self, p, *args):
@@ -22,17 +23,19 @@ class HairDryer(Tunnel):
         #绘制填充polygon
         p.drawPolygon(self.spt, self.spt2, self.ept2, self.ept, self.ept1, self.spt1)
 
-        #设置画笔的颜色(绿色)、线型(实线)
+        #设置画笔的颜色、线型(实线)
         p.setRenderHint(p.Antialiasing)
-        p.setPen(QtGui.QPen(QtCore.Qt.red, 0, QtCore.Qt.SolidLine, QtCore.Qt.SquareCap))
-
+        #有布置多条风筒的可能，在没有实现修改颜色的时候，选择用不同颜色绘制，每增加一条风筒下标加1
+        colors = [QtCore.Qt.red, QtCore.Qt.white, QtCore.Qt.magenta, QtCore.Qt.yellow, QtCore.Qt.darkRed, QtCore.Qt.cyan, QtCore.Qt.gray, QtCore.Qt.blue]
+        p.setPen(QtGui.QPen(colors[self.colorindex], 0, QtCore.Qt.SolidLine, QtCore.Qt.SquareCap))
         p.drawLine(self.spt1, self.ept1)
         p.drawLine(self.spt2, self.ept2)
 
     def mouseDoubleClickEvent(self, evt):
         if evt.button() == QtCore.Qt.LeftButton:
-            msg = QtGui.QMessageBox()
-            msg.setText("HairDryer")
-            msg.exec_()
+            hdpro = HairDryerDlg()
+            if hdpro.exec_() == QtGui.QDialog.Accepted:
+                print "hairDryerProInput"
+                print hdpro.lenthEdit.text()
             evt.accept()
 

@@ -27,7 +27,8 @@ class GraphicsWindow(pg.GraphicsView):
         super(GraphicsWindow, self).__init__(**kargs)
         self.modes = ['InsertTunnel', 'InsertHairDryer', 'NoMode']
         self.mode = 'NoMode'
-
+        self.hairDryerspt = None
+        self.colorindex = 0
         self.resize(*size)
         self.setBackground((39, 40, 34))
         if title is not None:
@@ -88,8 +89,6 @@ class GraphicsWindow(pg.GraphicsView):
         if evt.buttons() & QtCore.Qt.LeftButton:
             mousePt = self.vb.mapSceneToView(evt.scenePos())
             fourPts = self.caclTunPts(mousePt, 150, 80)
-            pt = pg.Point(fourPts[0].x(),fourPts[0].y())
-
             if self.mode == 'InsertTunnel':
                 # fourPts = self.caclTunPts(pg.Point(0,0), 150, 80)
                 t2 = Tunnel(fourPts[0], fourPts[2])
@@ -112,12 +111,21 @@ class GraphicsWindow(pg.GraphicsView):
                 # junctionClosure(self.vb, pg.Point(1000,0))
 
                 self.vb.scene().update()
+
+                self.hairDryerspt = pg.Point(fourPts[0].x()+12,fourPts[0].y()-12)
+
             if self.mode =='InsertHairDryer':
-                fourPts = self.caclTunPts(pt, 120, 20)
-                h1 = HairDryer(fourPts[0], fourPts[3])
-                h2 = HairDryer(fourPts[0], fourPts[1])
+                if self.hairDryerspt != None:
+                    fourPts = self.caclTunPts(self.hairDryerspt, 120, 20)
+                    self.hairDryerspt = None
+                else:
+                    fourPts = self.caclTunPts(mousePt, 125, 25)
+                h1 = HairDryer(fourPts[0], fourPts[3], self.colorindex)
+                h2 = HairDryer(fourPts[0], fourPts[1], self.colorindex)
                 self.vb.addItem(h1)
                 self.vb.addItem(h2)
+                self.colorindex = self.colorindex +1
+
                 self.vb.scene().update()
         self.mode = 'NoMode'
         evt.accept()

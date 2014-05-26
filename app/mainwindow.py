@@ -2,6 +2,7 @@
 
 from PyQt4 import QtCore, QtGui
 
+from dialogs import *
 from graphicswindow import GraphicsWindow
 
 import sdi_rc
@@ -34,6 +35,64 @@ class MainWindow(QtGui.QMainWindow):
     def saveAs(self):
         pass
 
+    def methodChoose(self):
+        mtd = VMethodDlg()
+        if mtd.exec_() == QtGui.QDialog.Accepted:
+            print "methodChoose"
+            print mtd.methodCmb.currentText()
+
+    def tunnelProInput(self):
+        tpro = TunnelDlg()
+        if tpro.exec_() == QtGui.QDialog.Accepted:
+            print "tunnelProInput"
+            print tpro.lenthEdit.text()
+
+    def ttunnelProInput(self):
+        ttpro = TTunnelDlg()
+        if ttpro.exec_() == QtGui.QDialog.Accepted:
+            print "ttunnelProInput"
+            print ttpro.lenthEdit.text()
+
+    def hairDryerProInput(self):
+        hdpro = HairDryerDlg()
+        if hdpro.exec_() == QtGui.QDialog.Accepted:
+            print "hairDryerProInput"
+            print hdpro.lenthEdit.text()
+
+    def windLibProInput(self):
+        wlPro = WindLibDlg()
+        if wlPro.exec_() == QtGui.QDialog.Accepted:
+            print "windLibProInput"
+            print wlPro.numEdit.text()
+
+    def windCabProInput(self):
+        wcPro = WindCabinetDlg()
+        if wcPro.exec_() == QtGui.QDialog.Accepted:
+            print "windCabProInput"
+            print wcPro.numEdit.text()
+
+    def disRamProInput(self):
+        drPro = DisconRamDlg()
+        if drPro.exec_() == QtGui.QDialog.Accepted:
+            print "disRamProInput"
+            print drPro.numEdit.text()
+
+    def drilVentProInput(self):
+        dvPro = DrilVentilationDlg()
+        if dvPro.exec_() == QtGui.QDialog.Accepted:
+            print "drilVentProInput"
+            print dvPro.numEdit.text()
+
+    def nodeProInput(self):
+        nodePro = NodeProDlg()
+        if nodePro.exec_() == QtGui.QDialog.Accepted:
+            print "nodeProInput"
+            print nodePro.idEdit.text()
+
+    def getSeriesFan(self):
+        msg = QtGui.QMessageBox()
+        msg.setText("There are some promblem!!!")
+        msg.exec_()
     def printfile(self):
         # printer = QtGui.QPrinter()
         # dialog = QtGui.QPrintDialog(printer, self)
@@ -112,26 +171,26 @@ class MainWindow(QtGui.QMainWindow):
         # triggered=self.textEdit.paste
 
         self.methodAct = QtGui.QAction("&method", self,
-                                      statusTip="Choose method", triggered=self.open)
+                                      statusTip="Choose method", triggered=self.methodChoose)
 
-        self.wayAct = QtGui.QAction("&way", self,
-                                      statusTip="Choose way", triggered=self.open)
         self.tunnelProAct = QtGui.QAction("&tunnelPro", self,
-                                      statusTip="tunnelPro", triggered=self.open)
+                                      statusTip="tunnelPro", triggered=self.tunnelProInput)
+        self.ttunnelProAct = QtGui.QAction("&ttunnelPro", self,
+                                      statusTip="ttunnelPro", triggered=self.ttunnelProInput)
         self.hairDryerProAct = QtGui.QAction("&hairDryerPro", self,
-                                      statusTip="hairDryerPro", triggered=self.open)
+                                      statusTip="hairDryerPro", triggered=self.hairDryerProInput)
         self.windLibAct = QtGui.QAction("&windLib", self,
-                                      statusTip="windLibAct", triggered=self.open)
+                                      statusTip="windLibAct", triggered=self.windLibProInput)
         self.windCabinetAct = QtGui.QAction("&windCabinet", self,
-                                      statusTip="windCabinet", triggered=self.open)
+                                      statusTip="windCabinet", triggered=self.windCabProInput)
         self.discontinusRamAct = QtGui.QAction("&discontinusRam", self,
-                                      statusTip="discontinusRam", triggered=self.open)
+                                      statusTip="discontinusRam", triggered=self.disRamProInput)
         self.seriesFanAct = QtGui.QAction("&seriesFan", self,
-                                      statusTip="seriesFan", triggered=self.open)
+                                      statusTip="seriesFan", triggered=self.getSeriesFan)
         self.drillingVentAct = QtGui.QAction("&drillingVent", self,
-                                      statusTip="drillingVent", triggered=self.open)
+                                      statusTip="drillingVent", triggered=self.drilVentProInput)
         self.nodeProAct = QtGui.QAction("&nodePro", self,
-                                      statusTip="nodePro", triggered=self.open)
+                                      statusTip="nodePro", triggered=self.nodeProInput)
 
 
         self.TunnelCmdAct = QtGui.QAction(
@@ -183,9 +242,11 @@ class MainWindow(QtGui.QMainWindow):
         self.menuBar().addSeparator()
 
         self.paramMenu = self.menuBar().addMenu(self.tr("Parameter"))
+        self.tunnelMenu = QtGui.QMenu(self.tr("tunnelMenu"))
         self.paramMenu.addAction(self.methodAct)
-        self.paramMenu.addAction(self.wayAct)
-        self.paramMenu.addAction(self.tunnelProAct)
+        self.paramMenu.addMenu(self.tunnelMenu)
+        self.tunnelMenu.addAction(self.tunnelProAct)
+        self.tunnelMenu.addAction(self.ttunnelProAct)
         self.paramMenu.addAction(self.hairDryerProAct)
         self.paramMenu.addAction(self.windLibAct)
         self.paramMenu.addAction(self.windCabinetAct)

@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 from buildfuc import *
 import pyqtgraph as pg
+from dialogs import *
 
 class Tunnel(pg.GraphicsObject):
     def __init__(self, start=0, end=0, isTTunnel=False):
@@ -103,13 +104,16 @@ class Tunnel(pg.GraphicsObject):
 
     def mouseDoubleClickEvent(self, evt):
         if evt.button() == QtCore.Qt.LeftButton:
-            msg = QtGui.QMessageBox()
             if self.isTTunnel:
-                msg.setText("TTunnel")
+                ttpro = TTunnelDlg()
+                if ttpro.exec_() == QtGui.QDialog.Accepted:
+                    print "ttunnelProInput"
+                    print ttpro.lenthEdit.text()
             else:
-                msg.setText("VTunnel")
-            # msg.setText("VTunnel")
-            msg.exec_()
+                tpro = TunnelDlg()
+                if tpro.exec_() == QtGui.QDialog.Accepted:
+                    print "tunnelProInput"
+                    print tpro.lenthEdit.text()
             evt.accept()
 
     def boundingRect(self):
