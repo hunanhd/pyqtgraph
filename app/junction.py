@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from tunnel import *
 import numpy as np
 
-class JunctionEdgInfo:
+from tunnel import *
+
+class JunctionInfo:
     def __init__(self, id=None, soe=False, v=pg.Vector()):
         self.tunnel = id
         self.startOrEnd = soe
@@ -12,13 +13,13 @@ class JunctionEdgInfo:
         return self.tunnel == b.tunnel and self.startOrEnd == b.startOrEnd and self.v == b.v
 
     def __repr__(self):
-        return "JunctionEdgInfo" + repr((self.tunnel, self.startOrEnd, self.v))
+        return "JunctionInfo" + repr((self.tunnel, self.startOrEnd, self.v))
 
 
-def buildJunctionEdgeInfo(tunnels, pt):
+def buildJunctionInfo(tunnels, pt):
     ges = []
     for t in tunnels:
-        info = JunctionEdgInfo()
+        info = JunctionInfo()
         info.tunnel = t
         v = pg.Vector(t.ept - t.spt)
         v.normalize()
@@ -33,7 +34,7 @@ def buildJunctionEdgeInfo(tunnels, pt):
 
 
 #至少需要2个元素才能正确的闭合
-def edgeJunctionClosureImpl(junctionPt, ges):
+def junctionClosureImpl(junctionPt, ges):
     f = lambda v1, v2: (v1 + v2 ) * (1.0 / np.sin(2 * np.pi - v_angle(v1, v2)))
     if len(ges) == 1:
         ges.append(ges[0])
@@ -47,11 +48,11 @@ def edgeJunctionClosureImpl(junctionPt, ges):
             v3 = f(ges[i].v, ges[i + 1].v)
         else:
             v3 = -v3
-        ges[i].tunnel.dealWithPointBoundary(junctionPt, v3)
-        ges[i + 1].tunnel.dealWithPointBoundary(junctionPt, v3)
+        ges[i].tunnel.trimSides(junctionPt, v3)
+        ges[i + 1].tunnel.trimSides(junctionPt, v3)
 
 
-def findLinesByPoint(vb, pt):
+def findTunnelsByPoint(vb, pt):
     all_items = vb.addedItems
     tunnels = []
     for item in all_items:
@@ -61,10 +62,14 @@ def findLinesByPoint(vb, pt):
     return tunnels
 
 
-def junctionClosure_helper(vb, pt):
-    tunnels = findLinesByPoint(vb, pt)
-    ges = buildJunctionEdgeInfo(tunnels, pt)
-    f = lambda info: v_angle(info.v, pg.Vector(1, 0))
+def junctionClosure(vb, pt):
+    #查找闭合点pt关联的所有巷道
+    tunnels = findTunnelsByPoint(vb, pt)
+    #构造闭合点信息数组ges
+    ges = buildJunctionInfo(tunnels, pt)
     if len(ges) > 0:
+        #对闭合点信息数组排序(按内向量的角度来排序, 角度范围: 0~360度)
+        f = lambda info: v_angle(info.v, pg.Vector(1, 0))
         ges.sort(key=f)
-        edgeJunctionClosureImpl(pt, ges)
+        #处理闭合
+        junctionClosureImpl(pt, ges)
