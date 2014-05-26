@@ -2,6 +2,7 @@
 
 from buildfuc import *
 
+
 class Axis(QtGui.QGraphicsPathItem):
     def __init__(self, l):
         super(Axis, self).__init__()
@@ -40,7 +41,7 @@ class Axis(QtGui.QGraphicsPathItem):
         path.lineTo(pt)
         self.setPath(path)
         self.setPen(pg.fn.mkPen(color='w'))
-        self.setFlags(self.flags() | self.ItemIgnoresTransformations )
+        self.setFlags(self.flags() | self.ItemIgnoresTransformations)
         # self.setBrush(pg.fn.mkBrush()
 
     def paint(self, p, *args):

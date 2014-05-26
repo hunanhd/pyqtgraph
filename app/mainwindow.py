@@ -1,8 +1,10 @@
 # -*- coding:utf-8 -*-
 
-from graphicswindow import GraphicsWindow
-from PyQt4.QtGui import QMainWindow
 from PyQt4 import QtCore, QtGui
+
+from graphicswindow import GraphicsWindow
+
+import sdi_rc
 
 class MainWindow(QtGui.QMainWindow):
     #sequenceNumber = 1
@@ -21,6 +23,7 @@ class MainWindow(QtGui.QMainWindow):
 
     def newFile(self):
         pass
+
     def open(self):
         pass
 
