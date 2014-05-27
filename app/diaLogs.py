@@ -489,11 +489,10 @@ class CaclWorkerDlg(QtGui.QDialog):
         #self.resize(400,300)
         self.setWindowTitle(self.tr("worker number"))
 
-def main():
-    app = QtGui.QApplication([])
+def clicking():
     ttdia = TunnelDlg()
     v = VMethodDlg()
-    h =HairDryerDlg()
+    h = HairDryerDlg()
     w = WindLibDlg()
     wc = WindCabinetDlg()
     d = DisconRamDlg()
@@ -503,11 +502,17 @@ def main():
     cs = CaclWindSpeedDlg()
     cu = CaclUnitPowerDlg()
     cm = CaclMineHeatDlg()
-    if cm.exec_() == 1:
-        print "xxx"
-        # print n.temperEdit.text()
-    return True
-        # sys.exit(app.exec_())
+    if cm.exec_() == QtGui.QDialog.Accepted:
+        print cm.temperInEdit.text()
+
+def main():
+    app = QtGui.QApplication([])
+
+    btn = QtGui.QPushButton("xxx")
+    btn.clicked.connect(clicking)
+    btn.show()
+
+    sys.exit(app.exec_())
 
 if __name__ == '__main__':
     main()
