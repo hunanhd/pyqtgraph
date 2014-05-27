@@ -500,7 +500,8 @@ def clicking():
     n = NodeProDlg()
     ca = CaclAfterDampDlg()
     cs = CaclWindSpeedDlg()
-    cu = CaclUnitPowerDlg()
+    cu = CaclUnitPowerDlg()cd py
+
     cm = CaclMineHeatDlg()
     if cm.exec_() == QtGui.QDialog.Accepted:
         print cm.temperInEdit.text()
