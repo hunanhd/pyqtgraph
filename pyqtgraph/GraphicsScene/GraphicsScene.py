@@ -184,8 +184,8 @@ class GraphicsScene(QtGui.QGraphicsScene):
     def leaveEvent(self, ev):  ## inform items that mouse is gone
         if len(self.dragButtons) == 0:
             self.sendHoverEvents(ev, exitOnly=True)
-        
-                
+
+
     def mouseReleaseEvent(self, ev):
         #print 'sceneRelease'
         if self.mouseGrabberItem() is None:
@@ -201,21 +201,21 @@ class GraphicsScene(QtGui.QGraphicsScene):
                     #print "sent click event"
                     ev.accept()
                 self.clickEvents.remove(cev[0])
-                
+
         if int(ev.buttons()) == 0:
             self.dragItem = None
             self.dragButtons = []
             self.clickEvents = []
             self.lastDrag = None
         QtGui.QGraphicsScene.mouseReleaseEvent(self, ev)
-        
+
         self.sendHoverEvents(ev)  ## let items prepare for next click/drag
 
     def mouseDoubleClickEvent(self, ev):
         QtGui.QGraphicsScene.mouseDoubleClickEvent(self, ev)
         if self.mouseGrabberItem() is None:  ## nobody claimed press; we are free to generate drag/click events
             self.clickEvents.append(MouseClickEvent(ev, double=True))
-        
+
     def sendHoverEvents(self, ev, exitOnly=False):
         ## if exitOnly, then just inform all previously hovered items that the mouse has left.
         
@@ -259,10 +259,10 @@ class GraphicsScene(QtGui.QGraphicsScene):
         
         if hasattr(ev, 'buttons') and int(ev.buttons()) == 0:
             self.lastHoverEvent = event  ## save this so we can ask about accepted events later.
-            
+
 
     def sendDragEvent(self, ev, init=False, final=False):
-        ## Send a MouseDragEvent to the current dragItem or to 
+        ## Send a MouseDragEvent to the current dragItem or to
         ## items near the beginning of the drag
         event = MouseDragEvent(ev, self.clickEvents[0], self.lastDrag, start=init, finish=final)
         #print "dragEvent: init=", init, 'final=', final, 'self.dragItem=', self.dragItem
@@ -271,7 +271,7 @@ class GraphicsScene(QtGui.QGraphicsScene):
                 acceptedItem = self.lastHoverEvent.dragItems().get(event.button(), None)
             else:
                 acceptedItem = None
-                
+
             if acceptedItem is not None:
                 #print "Drag -> pre-selected item:", acceptedItem
                 self.dragItem = acceptedItem
@@ -280,7 +280,7 @@ class GraphicsScene(QtGui.QGraphicsScene):
                     self.dragItem.mouseDragEvent(event)
                 except:
                     debug.printExc("Error sending drag event:")
-                    
+
             else:
                 #print "drag -> new item"
                 for item in self.itemsNearEvent(event):
@@ -305,25 +305,25 @@ class GraphicsScene(QtGui.QGraphicsScene):
                 self.dragItem.mouseDragEvent(event)
             except:
                 debug.printExc("Error sending hover exit event:")
-            
+
         self.lastDrag = event
-        
+
         return event.isAccepted()
-            
-        
+
+
     def sendClickEvent(self, ev):
         ## if we are in mid-drag, click events may only go to the dragged item.
         if self.dragItem is not None and hasattr(self.dragItem, 'mouseClickEvent'):
             ev.currentItem = self.dragItem
             self.dragItem.mouseClickEvent(ev)
-            
+
         ## otherwise, search near the cursor
         else:
             if self.lastHoverEvent is not None:
                 acceptedItem = self.lastHoverEvent.clickItems().get(ev.button(), None)
             else:
                 acceptedItem = None
-                
+
             if acceptedItem is not None:
                 ev.currentItem = acceptedItem
                 try:
@@ -340,7 +340,7 @@ class GraphicsScene(QtGui.QGraphicsScene):
                             item.mouseClickEvent(ev)
                         except:
                             debug.printExc("Error sending click event:")
-                            
+
                         if ev.isAccepted():
                             if int(item.flags() & item.ItemIsFocusable) > 0:
                                 item.setFocus(QtCore.Qt.MouseFocusReason)
@@ -351,7 +351,7 @@ class GraphicsScene(QtGui.QGraphicsScene):
                     #ev.accept()
         self.sigMouseClicked.emit(ev)
         return ev.isAccepted()
-        
+
     #def claimEvent(self, item, button, eventType):
         #key = (button, eventType)
         #if key in self.claimedEvents:
@@ -359,7 +359,7 @@ class GraphicsScene(QtGui.QGraphicsScene):
         #self.claimedEvents[key] = item
         #print "event", key, "claimed by", item
         #return True
-        
+
         
     def items(self, *args):
         #print 'args:', args

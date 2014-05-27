@@ -1,9 +1,7 @@
 # -*- coding:utf-8 -*-
-from buildfuc import *
-import pyqtgraph as pg
-from dialogs import *
+from TObject import *
 
-class Tunnel(pg.GraphicsObject):
+class Tunnel(TObject):
     def __init__(self, start=0, end=0, isTTunnel=False):
         pg.GraphicsObject.__init__(self)
         self.spt = start
@@ -14,6 +12,9 @@ class Tunnel(pg.GraphicsObject):
         self.ept1 = None
         self.ept2 = None
         self.width = 15
+        self.currentPen = QtGui.QPen(QtCore.Qt.white, 0, QtCore.Qt.SolidLine, QtCore.Qt.SquareCap)
+        self.bound = None
+        self.mouseHovering = False
         self.bound = None
 
         self.caclVector()
@@ -31,18 +32,19 @@ class Tunnel(pg.GraphicsObject):
 
         #设置画笔的颜色(绿色)、线型(实线)
         p.setRenderHint(p.Antialiasing)
-        p.setPen(QtGui.QPen(QtCore.Qt.green, 1, QtCore.Qt.SolidLine, QtCore.Qt.SquareCap))
+
+        p.setPen(self.currentPen)
 
         #临时保存QPainter的状态
         #原因: 即将修改QPainter的画笔和画刷
-        p.save()
+        # p.save()
         #用蓝色绘制spt1-->ept1这条线
         #没什么特别含义，就是临时用来区分一下这2条线
         #以后程序完成了再改回去即可
-        p.setPen(QtGui.QColor(0, 0, 255))
+        # p.setPen(QtGui.QColor(0, 0, 255))
         p.drawLine(self.spt1, self.ept1)
         #恢复QPainter的状态: 画刷颜色为(30,40,34),即背景色; 画笔的颜色(绿色)、线型(实线)
-        p.restore()
+        # p.restore()
 
         #用绿色实线绘制spt2-->ept2这条线
         p.drawLine(self.spt2, self.ept2)
@@ -133,7 +135,6 @@ class Tunnel(pg.GraphicsObject):
         dy = max(dy0,dy1)
         self.bound = QtCore.QRectF(lx,ty,rx-lx,-ty+dy)
         return self.bound
-
 
 if __name__ == '__main__':
     a = [

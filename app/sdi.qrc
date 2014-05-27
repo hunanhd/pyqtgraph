@@ -12,5 +12,7 @@
         <file>images/hairdryer.png</file>
         <file>images/node.png</file>
         <file>images/fileprint.png</file>
+		<file>images/windlib.png</file>
+        <file>images/windcab.png</file>
     </qresource>
 </RCC>

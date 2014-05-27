@@ -12,6 +12,27 @@ class CustomViewBox(pg.ViewBox):
         self.setAspectLocked(True, ratio=None)
         # self.vb.setMouseEnabled(False,False)
 
+        self.autoBtn = pg.ButtonItem(pg.pixmaps.getPixmap('auto'), 14, self)
+        self.autoBtn.mode = 'auto'
+        self.autoBtn.clicked.connect(self.autoBtnClicked)
+
+    def autoBtnClicked(self):
+        if self.autoBtn.mode == 'auto':
+            self.enableAutoRange()
+            self.autoBtn.show()
+            # self.autoBtn.hide()
+
+    def resizeEvent(self, ev):
+        if self.autoBtn is None:  ## already closed down
+            return
+        btnRect = self.mapRectFromItem(self.autoBtn, self.autoBtn.boundingRect())
+        y = self.size().height() - btnRect.height()
+        self.autoBtn.setPos(0, y)
+
+    def remove(self):
+        # self.removeItem()
+        print self.scene().selectedItems()
+
     ## reimplement right-click to zoom out
     def mouseClickEvent(self, ev):
         pg.ViewBox.mouseClickEvent(self, ev)
@@ -19,16 +40,24 @@ class CustomViewBox(pg.ViewBox):
     def mouseDragEvent(self, ev):
         pg.ViewBox.mouseDragEvent(self, ev)
 
+    def mouseMoveEvent(self, ev):
+        pg.ViewBox.mouseMoveEvent(self, ev)
+
+
 #直接从GraphicsView派生
 #参考example/Draw.py、GraphicsScene.py、customPlot.py
 
 class GraphicsWindow(pg.GraphicsView):
     def __init__(self, title=None, size=(800, 800), **kargs):
         super(GraphicsWindow, self).__init__(**kargs)
-        self.modes = ['InsertTunnel', 'InsertHairDryer', 'NoMode']
+        self.modes = ['InsertTunnel', 'InsertHairDryer', 'InsertFan', 'InsertNode', 'NoMode']
         self.mode = 'NoMode'
-        self.hairDryerspt = None
+        self.hairDryerspt1 = None
+        self.hairDryerspt2 = None
         self.colorindex = 0
+
+        # 给风筒定义一个方向指标，如果是朝上就为1,否则为0
+        self.directFlg = 1
         self.resize(*size)
         self.setBackground((39, 40, 34))
         if title is not None:
@@ -49,8 +78,6 @@ class GraphicsWindow(pg.GraphicsView):
         self.vb.addItem(self.vLine, ignoreBounds=True)
         self.vb.addItem(self.hLine, ignoreBounds=True)
 
-        self.mw = None
-
         self.proxy = pg.SignalProxy(
             self.vb.scene().sigMouseMoved, rateLimit=60, slot=self.sceneMouseMoved)
         self.vb.scene().sigMouseClicked.connect(self.sceneMousePressed)
@@ -58,14 +85,21 @@ class GraphicsWindow(pg.GraphicsView):
         self.junction_timer = QtCore.QTimer(self)
         self.junction_timer.timeout.connect(self.auto_junction)
         self.junction_timer.start(0)
+
     def setTunnelMode(self):
         self.mode = 'InsertTunnel'
 
     def setHairDryerMode(self):
         self.mode = 'InsertHairDryer'
 
-    def setMainWindow(self, mw):
-        self.mw = mw
+    def setFanMode(self):
+        self.mode = 'InsertFan'
+
+    def setNodeMode(self):
+        self.mode = 'InsertNode'
+
+    # def setMainWindow(self, mw):
+    #     self.mw = mw
 
     def sceneMouseMoved(self, evt):
         # using signal proxy turns original arguments into a tuple
@@ -73,7 +107,8 @@ class GraphicsWindow(pg.GraphicsView):
         if self.vb.sceneBoundingRect().contains(pos):
             mousePoint = self.vb.mapSceneToView(pos)
             self.msg = "x=%0.1f,y=%0.1f" % (mousePoint.x(), mousePoint.y())
-            self.mw.statusBar().showMessage(self.msg)
+            self.parent().statusBar().showMessage(self.msg)
+
             self.vLine.setPos(mousePoint.x())
             self.hLine.setPos(mousePoint.y())
             self.vb.scene().update()
@@ -93,7 +128,7 @@ class GraphicsWindow(pg.GraphicsView):
                 # fourPts = self.caclTunPts(pg.Point(0,0), 150, 80)
                 t2 = Tunnel(fourPts[0], fourPts[2])
                 t3 = Tunnel(fourPts[0], fourPts[3])
-                t1 = Tunnel(fourPts[0], fourPts[1],True)
+                t1 = Tunnel(fourPts[0], fourPts[1], True)
                 # t4 = Tunnel(fourPts[1], fourPts[2])
                 # t5 = Tunnel(fourPts[1], pg.Point(1000,0))
                 # t6 = Tunnel(fourPts[1], fourPts[3])
@@ -112,31 +147,44 @@ class GraphicsWindow(pg.GraphicsView):
 
                 self.vb.scene().update()
 
-                self.hairDryerspt = pg.Point(fourPts[0].x()+12,fourPts[0].y()-12)
+                self.hairDryerspt1 = pg.Point(fourPts[0].x() + 12, fourPts[0].y() - 12)
+                self.hairDryerspt2 = pg.Point(fourPts[0].x() + 12, fourPts[0].y() + 10)
 
-            if self.mode =='InsertHairDryer':
-                if self.hairDryerspt != None:
-                    fourPts = self.caclTunPts(self.hairDryerspt, 120, 20)
-                    self.hairDryerspt = None
+            #绘制风筒的时候有逻辑错误
+            #现在实现的只能是先把朝下的风筒布置完，然后再布置朝上的风筒
+            #
+            if self.mode == 'InsertHairDryer':
+                if self.hairDryerspt2 != None and mousePt.y() > self.hairDryerspt2.y() + 10:
+                    fourPts = self.caclTunPts(self.hairDryerspt2, 120, 20)
+                    self.hairDryerspt2 = None
+                    self.directFlg = 1
+                elif self.hairDryerspt1 != None and mousePt.y() <= self.hairDryerspt1.y() - 12:
+                    fourPts = self.caclTunPts(self.hairDryerspt1, 120, 20)
+                    self.hairDryerspt1 = None
+                    self.directFlg = 0
                 else:
                     fourPts = self.caclTunPts(mousePt, 125, 25)
-                h1 = HairDryer(fourPts[0], fourPts[3], self.colorindex)
-                h2 = HairDryer(fourPts[0], fourPts[1], self.colorindex)
+                if self.directFlg == 0:
+                    h1 = HairDryer(fourPts[0], fourPts[3], self.colorindex)
+                    h2 = HairDryer(fourPts[0], fourPts[1], self.colorindex)
+                elif self.directFlg == 1:
+                    h1 = HairDryer(fourPts[0], fourPts[2], self.colorindex)
+                    h2 = HairDryer(fourPts[0], fourPts[1], self.colorindex)
                 self.vb.addItem(h1)
                 self.vb.addItem(h2)
-                self.colorindex = self.colorindex +1
+                self.colorindex = self.colorindex + 1
 
                 self.vb.scene().update()
         self.mode = 'NoMode'
         evt.accept()
 
     def auto_junction(self):
-        import time
         # print '[%s]auto_junction is called' % time.ctime()
         networks = buildNetworks(self.vb)
         # print '点个数:',len(networks)
         for pt in networks.keys():
             junctionClosure(networks[pt], pt)
+
 
 def findAdjTunnels(vb, pt):
     tunnels = []
@@ -146,6 +194,7 @@ def findAdjTunnels(vb, pt):
                 tunnels.append(item)
     return tunnels
 
+
 def findAllTunnels(vb):
     tunnels = []
     for item in vb.addedItems:
@@ -153,11 +202,12 @@ def findAllTunnels(vb):
             tunnels.append(item)
     return tunnels
 
+
 def buildNetworks(vb):
     #在viewbox中查找所有巷道
-    tunnels=findAllTunnels(vb)
+    tunnels = findAllTunnels(vb)
     #记录每一个节点关联的巷道(拓扑关系构成了图或者网络)
-    networks={}
+    networks = {}
     for t in tunnels:
         if not t.spt in networks:
             networks[t.spt] = [t]

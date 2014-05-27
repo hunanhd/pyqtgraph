@@ -10,11 +10,16 @@ displayed as well.
 """
 from buildfuc import *
 from mainwindow import MainWindow
+import global_inst
 
 def main():
     app = QtGui.QApplication([])
-    mainWindow = MainWindow()
-    mainWindow.show()
+    w = MainWindow()
+
+    global_inst.mw_ = w
+    global_inst.win_ = w.win
+
+    w.show()
 
     import sys
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):

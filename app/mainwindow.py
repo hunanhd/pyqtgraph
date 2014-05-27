@@ -1,23 +1,19 @@
 # -*- coding:utf-8 -*-
 
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtCore
 
 from dialogs import *
 from graphicswindow import GraphicsWindow
 
 import sdi_rc
 
-
 class MainWindow(QtGui.QMainWindow):
-    #sequenceNumber = 1
-
     def __init__(self, fileName=None):
         super(MainWindow, self).__init__()
         self.init()
         self.setWindowTitle(self.tr("MainWindown Title"))
         self.resize(900, 600)
         self.win = GraphicsWindow()
-        self.win.setMainWindow(self)
         self.setCentralWidget(self.win)
 
     def closeEvent(self, event):
@@ -93,6 +89,7 @@ class MainWindow(QtGui.QMainWindow):
         msg = QtGui.QMessageBox()
         msg.setText("There are some promblem!!!")
         msg.exec_()
+
     def printfile(self):
         # printer = QtGui.QPrinter()
         # dialog = QtGui.QPrintDialog(printer, self)
@@ -117,6 +114,14 @@ class MainWindow(QtGui.QMainWindow):
     #修改模式为风筒布置
     def setHairDryerMode(self):
         self.win.setHairDryerMode()
+
+    #修改模式为风机插入
+    def setFanMode(self):
+        self.win.setFanMode()
+
+    #修改模式为节点插入
+    def setNodeMode(self):
+        self.win.setNodeMode()
 
     def init(self):
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
@@ -171,27 +176,26 @@ class MainWindow(QtGui.QMainWindow):
         # triggered=self.textEdit.paste
 
         self.methodAct = QtGui.QAction("&method", self,
-                                      statusTip="Choose method", triggered=self.methodChoose)
+                                       statusTip="Choose method", triggered=self.methodChoose)
 
         self.tunnelProAct = QtGui.QAction("&tunnelPro", self,
-                                      statusTip="tunnelPro", triggered=self.tunnelProInput)
+                                          statusTip="tunnelPro", triggered=self.tunnelProInput)
         self.ttunnelProAct = QtGui.QAction("&ttunnelPro", self,
-                                      statusTip="ttunnelPro", triggered=self.ttunnelProInput)
+                                           statusTip="ttunnelPro", triggered=self.ttunnelProInput)
         self.hairDryerProAct = QtGui.QAction("&hairDryerPro", self,
-                                      statusTip="hairDryerPro", triggered=self.hairDryerProInput)
+                                             statusTip="hairDryerPro", triggered=self.hairDryerProInput)
         self.windLibAct = QtGui.QAction("&windLib", self,
-                                      statusTip="windLibAct", triggered=self.windLibProInput)
+                                        statusTip="windLibAct", triggered=self.windLibProInput)
         self.windCabinetAct = QtGui.QAction("&windCabinet", self,
-                                      statusTip="windCabinet", triggered=self.windCabProInput)
+                                            statusTip="windCabinet", triggered=self.windCabProInput)
         self.discontinusRamAct = QtGui.QAction("&discontinusRam", self,
-                                      statusTip="discontinusRam", triggered=self.disRamProInput)
+                                               statusTip="discontinusRam", triggered=self.disRamProInput)
         self.seriesFanAct = QtGui.QAction("&seriesFan", self,
-                                      statusTip="seriesFan", triggered=self.getSeriesFan)
+                                          statusTip="seriesFan", triggered=self.getSeriesFan)
         self.drillingVentAct = QtGui.QAction("&drillingVent", self,
-                                      statusTip="drillingVent", triggered=self.drilVentProInput)
+                                             statusTip="drillingVent", triggered=self.drilVentProInput)
         self.nodeProAct = QtGui.QAction("&nodePro", self,
-                                      statusTip="nodePro", triggered=self.nodeProInput)
-
+                                        statusTip="nodePro", triggered=self.nodeProInput)
 
         self.TunnelCmdAct = QtGui.QAction(
             QtGui.QIcon(':/images/tunnel.png'), self.tr("DrawTunnel"), self,
@@ -204,6 +208,26 @@ class MainWindow(QtGui.QMainWindow):
             shortcut="Ctrl+H",
             statusTip=self.tr("Draw the HairDryer"),
             triggered=self.setHairDryerMode)
+
+        self.fanCmdAct = QtGui.QAction(
+            QtGui.QIcon(':/images/fan.png'), self.tr("FanInsert"), self,
+            statusTip=self.tr("Insert the fan"),
+            triggered=self.setFanMode)
+
+        self.nodeCmdAct = QtGui.QAction(
+            QtGui.QIcon(':/images/node.png'), self.tr("NodeInsert"), self,
+            statusTip=self.tr("Insert the node"),
+            triggered=self.setNodeMode)
+
+        self.windlibCmdAct = QtGui.QAction(
+            QtGui.QIcon(':/images/windlib.png'), self.tr("windlib"), self,
+            statusTip=self.tr("wind library"),
+            triggered=self.open)
+
+        self.windcabCmdAct = QtGui.QAction(
+            QtGui.QIcon(':/images/windcab.png'), self.tr("windcab"), self,
+            statusTip=self.tr("wind cabinet"),
+            triggered=self.open)
 
         self.aboutAct = QtGui.QAction("&About", self,
                                       statusTip="Show the application's About box",
@@ -238,6 +262,10 @@ class MainWindow(QtGui.QMainWindow):
         self.DrawMenu = self.menuBar().addMenu(self.tr("Draw"))
         self.DrawMenu.addAction(self.TunnelCmdAct)
         self.DrawMenu.addAction(self.HairDryerCmdAct)
+        self.DrawMenu.addAction(self.fanCmdAct)
+        self.DrawMenu.addAction(self.nodeCmdAct)
+        self.DrawMenu.addAction(self.windcabCmdAct)
+        self.DrawMenu.addAction(self.windlibCmdAct)
 
         self.menuBar().addSeparator()
 
@@ -280,7 +308,10 @@ class MainWindow(QtGui.QMainWindow):
         self.addToolBar(QtCore.Qt.LeftToolBarArea, self.drawToolBar)
         self.drawToolBar.addAction(self.TunnelCmdAct)
         self.drawToolBar.addAction(self.HairDryerCmdAct)
-
+        self.drawToolBar.addAction(self.fanCmdAct)
+        self.drawToolBar.addAction(self.nodeCmdAct)
+        self.drawToolBar.addAction(self.windcabCmdAct)
+        self.drawToolBar.addAction(self.windlibCmdAct)
 
     def createStatusBar(self):
         self.statusBar().showMessage("Ready")
