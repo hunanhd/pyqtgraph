@@ -14,11 +14,8 @@ class Tunnel(TObject):
         self.width = 15
         self.pen = pg.fn.mkPen('w')
         self.currentPen = self.pen
-        self.bound = None
         self.mouseHovering = False
-        self.bound = None
         self.selectFlag = False
-
         self.caclVector()
 
     def __repr__(self):
@@ -57,6 +54,21 @@ class Tunnel(TObject):
 
         #绘制boundingRect
         # p.drawRect(self.bound)
+
+    def shape(self):
+        polg = QtGui.QPolygonF()
+        polg.append(self.spt)
+        polg.append(self.spt1)
+        polg.append(self.ept1)
+        polg.append(self.ept)
+        polg.append(self.ept2)
+        polg.append(self.spt2)
+        path = QtGui.QPainterPath()
+        path.addPolygon(polg)
+        return path
+
+    def boundingRect(self):
+        return self.shape().boundingRect()
 
     def caclVector(self):
         spt = self.spt
@@ -107,36 +119,17 @@ class Tunnel(TObject):
 
 
     def mouseDoubleClickEvent(self, evt):
+        self.selectFlag = False
         if evt.button() == QtCore.Qt.LeftButton:
             if self.isTTunnel:
                 ttpro = TTunnelDlg()
                 if ttpro.exec_() == QtGui.QDialog.Accepted:
-                    print "ttunnelProInput"
                     print ttpro.lenthEdit.text()
             else:
                 tpro = TunnelDlg()
                 if tpro.exec_() == QtGui.QDialog.Accepted:
-                    print "tunnelProInput"
                     print tpro.lenthEdit.text()
             evt.accept()
-
-    def boundingRect(self):
-        #lx是x值最小的点对应的x(左边的x)
-        lx0 = min(self.spt1.x(),self.spt2.x())
-        lx1 = min(self.ept1.x(),self.ept2.x())
-        lx = min(lx0,lx1)
-        rx0 = max(self.spt1.x(),self.spt2.x())
-        rx1 = max(self.ept1.x(),self.ept2.x())
-        rx = max(rx0,rx1)
-        #ty是y值最小的点对应的y(上部的y)
-        ty0 = min(self.spt1.y(),self.spt2.y())
-        ty1 = min(self.ept1.y(),self.ept2.y())
-        ty = min(ty0,ty1)
-        dy0 = max(self.spt1.y(),self.spt2.y())
-        dy1 = max(self.ept1.y(),self.ept2.y())
-        dy = max(dy0,dy1)
-        self.bound = QtCore.QRectF(lx,ty,rx-lx,-ty+dy)
-        return self.bound
 
 if __name__ == '__main__':
     a = [

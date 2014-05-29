@@ -4,7 +4,7 @@ from tidsaxis import *
 from junction import *
 import pyqtgraph as pg
 from hairdryer import HairDryer
-
+from fan import Fan
 
 class CustomViewBox(pg.ViewBox):
     def __init__(self, *args, **kwds):
@@ -114,7 +114,7 @@ class CustomViewBox(pg.ViewBox):
 class GraphicsWindow(pg.GraphicsView):
     def __init__(self, title=None, size=(800, 800), **kargs):
         super(GraphicsWindow, self).__init__(**kargs)
-        self.modes = ['InsertTunnel', 'InsertHairDryer', 'InsertFan', 'InsertNode', 'NoMode']
+        self.modes = ['InsertTunnel', 'InsertHairDryer', 'InsertFan', 'InsertNode','InsertFan' 'NoMode']
         self.mode = 'NoMode'
         self.hairDryerspt1 = None
         self.hairDryerspt2 = None
@@ -162,6 +162,8 @@ class GraphicsWindow(pg.GraphicsView):
     def setNodeMode(self):
         self.mode = 'InsertNode'
 
+    def setFanMode(self):
+        self.mode = 'InsertFan'
     # def setMainWindow(self, mw):
     #     self.mw = mw
 
@@ -237,10 +239,19 @@ class GraphicsWindow(pg.GraphicsView):
                 self.vb.addItem(h1)
                 self.vb.addItem(h2)
                 self.colorindex = self.colorindex + 1
-
                 self.vb.scene().update()
+            if self.mode == 'InsertFan':
+                self.insertFan(mousePt)
         self.mode = 'NoMode'
         evt.accept()
+
+    def insertFan(self,pt):
+        f = Fan(pt)
+        QtCore.Qt.MouseButtons
+        for t in self.scene().items():
+            print t.acceptedMouseButtons()
+        print self.scene().selectedItems()
+        print self.scene().mouseGrabberItem()
 
     def auto_junction(self):
         # print '[%s]auto_junction is called' % time.ctime()
