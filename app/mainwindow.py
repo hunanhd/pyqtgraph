@@ -179,7 +179,7 @@ class MainWindow(QtGui.QMainWindow):
                                       statusTip="Paste the clipboard's contents into the current selection", )
 
         self.autoAct = QtGui.QAction(QtGui.QIcon(':/images/auto.png'),
-                                      "&Auto", self, shortcut='Ctrl+A',
+                                      "&Auto", self, shortcut='A',
                                       statusTip="Auto Visible", triggered=self.autoViewAll)
         # triggered=self.textEdit.paste
 

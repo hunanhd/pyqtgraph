@@ -25,6 +25,13 @@ class CustomViewBox(pg.ViewBox):
         for b in findAllTunnels(self):
             self.removeItem(b)
 
+    def selectAll(self):
+        # self.disableAutoRange(pg.ViewBox.XYAxes)
+        for b in findAllTunnels(self):
+            b.selectFlag = True
+            b.currentPen = QtGui.QPen(QtCore.Qt.yellow, 0, QtCore.Qt.DashLine, QtCore.Qt.SquareCap)
+        self.update()
+
     ## reimplement right-click to zoom out
     def mouseClickEvent(self, ev):
         pg.ViewBox.mouseClickEvent(self, ev)
@@ -46,6 +53,8 @@ class CustomViewBox(pg.ViewBox):
                     b.currentPen = b.pen
                     b.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
                     self.update()
+        if ev.key() == QtCore.Qt.Key_A and ev.modifiers() & QtCore.Qt.ControlModifier:
+            self.selectAll()
 
     def contextMenuEnabled(self):
         return True
@@ -72,22 +81,28 @@ class CustomViewBox(pg.ViewBox):
 
         remAct = QtGui.QAction("Remove selected items", self.menu)
         remAllAct = QtGui.QAction("Remove all items", self.menu)
+        selAllAct = QtGui.QAction("Select all items", self.menu)
         remAllAct.triggered.connect(self.removeAll)
         remAct.triggered.connect(self.remove)
+        selAllAct.triggered.connect(self.selectAll)
 
         allTunnels = findAllTunnels(self)
         if allTunnels == []:
             remAct.setEnabled(False)
             remAllAct.setEnabled(False)
+            selAllAct.setEnabled(False)
         else:
             for b in allTunnels:
                 if b.selectFlag == False:
                     remAct.setEnabled(False)
+                    selAllAct.setEnabled(True)
                 else:
                     remAct.setEnabled(True)
+                    selAllAct.setEnabled(False)
             remAllAct.setEnabled(True)
         self.menu.addAction(remAct)
         self.menu.addAction(remAllAct)
+        self.menu.addAction(selAllAct)
         return self.menu
     def autoBtnClicked(self):
         self.enableAutoRange()
