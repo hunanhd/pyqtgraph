@@ -112,6 +112,7 @@ class TObject(pg.GraphicsObject):
             ev.ignore()
         self.update()
 
+
     def mouseCancleMenue(self):
         # self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable,False)
         # self.setSelected(False)
