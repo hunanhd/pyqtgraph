@@ -14,5 +14,6 @@
         <file>images/fileprint.png</file>
 		<file>images/windlib.png</file>
         <file>images/windcab.png</file>
+        <file>images/auto.png</file>
     </qresource>
 </RCC>

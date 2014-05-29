@@ -32,16 +32,16 @@ class HairDryer(Tunnel):
         p.drawLine(self.spt1, self.ept1)
         p.drawLine(self.spt2, self.ept2)
 
-    def setMouseHover(self, hover):
-        ## Inform the ROI that the mouse is(not) hovering over it
-        if self.mouseHovering == hover:
-            return
-        self.mouseHovering = hover
-        if hover:
-            self.currentPen = QtGui.QPen(QtCore.Qt.lightGray, 0, QtCore.Qt.DashLine, QtCore.Qt.SquareCap)
-        else:
-            self.currentPen = QtGui.QPen(self.colors[self.colorindex], 0, QtCore.Qt.SolidLine, QtCore.Qt.SquareCap)
-        self.update()
+    # def setMouseHover(self, hover):
+    #     ## Inform the ROI that the mouse is(not) hovering over it
+    #     if self.mouseHovering == hover:
+    #         return
+    #     self.mouseHovering = hover
+    #     if hover:
+    #         self.currentPen = QtGui.QPen(QtCore.Qt.lightGray, 0, QtCore.Qt.DashLine, QtCore.Qt.SquareCap)
+    #     else:
+    #         self.currentPen = QtGui.QPen(self.colors[self.colorindex], 0, QtCore.Qt.SolidLine, QtCore.Qt.SquareCap)
+    #     self.update()
 
     def mouseDoubleClickEvent(self, evt):
         if evt.button() == QtCore.Qt.LeftButton:

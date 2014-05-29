@@ -5,33 +5,25 @@ from junction import *
 import pyqtgraph as pg
 from hairdryer import HairDryer
 
+
 class CustomViewBox(pg.ViewBox):
     def __init__(self, *args, **kwds):
         pg.ViewBox.__init__(self, *args, **kwds)
         self.disableAutoRange(pg.ViewBox.XYAxes)
         self.setAspectLocked(True, ratio=None)
-        # self.vb.setMouseEnabled(False,False)
 
-        self.autoBtn = pg.ButtonItem(pg.pixmaps.getPixmap('auto'), 14, self)
-        self.autoBtn.mode = 'auto'
-        self.autoBtn.clicked.connect(self.autoBtnClicked)
-
-    def autoBtnClicked(self):
-        if self.autoBtn.mode == 'auto':
-            self.enableAutoRange()
-            self.autoBtn.show()
-            # self.autoBtn.hide()
-
-    def resizeEvent(self, ev):
-        if self.autoBtn is None:  ## already closed down
-            return
-        btnRect = self.mapRectFromItem(self.autoBtn, self.autoBtn.boundingRect())
-        y = self.size().height() - btnRect.height()
-        self.autoBtn.setPos(0, y)
-
+    def resizeEvent(self,ev):
+        self.setPos(0,0)
     def remove(self):
-        # self.removeItem()
-        print self.scene().selectedItems()
+        self.disableAutoRange(pg.ViewBox.XYAxes)
+        for b in findAllTunnels(self):
+            if b.selectFlag:
+                self.removeItem(b)
+
+    def removeAll(self):
+        self.disableAutoRange(pg.ViewBox.XYAxes)
+        for b in findAllTunnels(self):
+            self.removeItem(b)
 
     ## reimplement right-click to zoom out
     def mouseClickEvent(self, ev):
@@ -42,6 +34,63 @@ class CustomViewBox(pg.ViewBox):
 
     def mouseMoveEvent(self, ev):
         pg.ViewBox.mouseMoveEvent(self, ev)
+
+    def keyPressEvent(self, ev):
+        if ev.key() == QtCore.Qt.Key_Delete:
+            self.remove()
+        if ev.key() == QtCore.Qt.Key_Escape:
+            for b in findAllTunnels(self):
+                if b.selectFlag:
+                    # b.setSelected(False)
+                    b.selectFlag = False
+                    b.currentPen = b.pen
+                    b.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
+                    self.update()
+
+    def contextMenuEnabled(self):
+        return True
+
+    def raiseContextMenu(self, ev):
+        if not self.contextMenuEnabled():
+            return
+        menu = self.getMenu()
+        menu = self.scene().addParentContextMenus(self, menu, ev)
+        pos = ev.screenPos()
+        menu.popup(QtCore.QPoint(pos.x(), pos.y()))
+
+    def getMenu(self):
+        self.menu = QtGui.QMenu()
+        self.menu.setTitle("ViewBox options")
+
+        viewAll = QtGui.QAction("View All", self.menu)
+        viewAll.triggered.connect(self.autoBtnClicked)
+        if global_inst.mw_.autoAct.isEnabled():
+            viewAll.setEnabled(True)
+        else:
+            viewAll.setEnabled(False)
+        self.menu.addAction(viewAll)
+
+        remAct = QtGui.QAction("Remove selected items", self.menu)
+        remAllAct = QtGui.QAction("Remove all items", self.menu)
+        remAllAct.triggered.connect(self.removeAll)
+        remAct.triggered.connect(self.remove)
+
+        allTunnels = findAllTunnels(self)
+        if allTunnels == []:
+            remAct.setEnabled(False)
+            remAllAct.setEnabled(False)
+        else:
+            for b in allTunnels:
+                if b.selectFlag == False:
+                    remAct.setEnabled(False)
+                else:
+                    remAct.setEnabled(True)
+            remAllAct.setEnabled(True)
+        self.menu.addAction(remAct)
+        self.menu.addAction(remAllAct)
+        return self.menu
+    def autoBtnClicked(self):
+        self.enableAutoRange()
 
 
 #直接从GraphicsView派生
@@ -184,6 +233,13 @@ class GraphicsWindow(pg.GraphicsView):
         # print '点个数:',len(networks)
         for pt in networks.keys():
             junctionClosure(networks[pt], pt)
+
+        #
+        if not all(global_inst.win_.vb.autoRangeEnabled()):
+            # global_inst.mw_.autoAct.setEnabled(True)
+            self.parent().autoAct.setEnabled(True)
+        else:
+            self.parent().autoAct.setEnabled(False)
 
 
 def findAdjTunnels(vb, pt):

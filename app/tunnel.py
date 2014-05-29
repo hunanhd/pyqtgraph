@@ -12,10 +12,12 @@ class Tunnel(TObject):
         self.ept1 = None
         self.ept2 = None
         self.width = 15
-        self.currentPen = QtGui.QPen(QtCore.Qt.white, 0, QtCore.Qt.SolidLine, QtCore.Qt.SquareCap)
+        self.pen = pg.fn.mkPen('w')
+        self.currentPen = self.pen
         self.bound = None
         self.mouseHovering = False
         self.bound = None
+        self.selectFlag = False
 
         self.caclVector()
 

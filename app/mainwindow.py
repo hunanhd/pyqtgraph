@@ -2,9 +2,10 @@
 
 from PyQt4 import QtCore
 
-from dialogs import *
+from diaLogs import *
 from graphicswindow import GraphicsWindow
 
+import global_inst
 import sdi_rc
 
 class MainWindow(QtGui.QMainWindow):
@@ -30,6 +31,9 @@ class MainWindow(QtGui.QMainWindow):
 
     def saveAs(self):
         pass
+
+    def autoViewAll(self):
+        global_inst.win_.vb.enableAutoRange()
 
     def methodChoose(self):
         mtd = VMethodDlg()
@@ -173,6 +177,10 @@ class MainWindow(QtGui.QMainWindow):
         self.pasteAct = QtGui.QAction(QtGui.QIcon(':/images/paste.png'),
                                       "&Paste", self, shortcut=QtGui.QKeySequence.Paste,
                                       statusTip="Paste the clipboard's contents into the current selection", )
+
+        self.autoAct = QtGui.QAction(QtGui.QIcon(':/images/auto.png'),
+                                      "&Auto", self, shortcut='Ctrl+A',
+                                      statusTip="Auto Visible", triggered=self.autoViewAll)
         # triggered=self.textEdit.paste
 
         self.methodAct = QtGui.QAction("&method", self,
@@ -259,6 +267,11 @@ class MainWindow(QtGui.QMainWindow):
 
         self.menuBar().addSeparator()
 
+        self.viewMenu = self.menuBar().addMenu("&View")
+        self.viewMenu.addAction(self.autoAct)
+
+        self.menuBar().addSeparator()
+
         self.DrawMenu = self.menuBar().addMenu(self.tr("Draw"))
         self.DrawMenu.addAction(self.TunnelCmdAct)
         self.DrawMenu.addAction(self.HairDryerCmdAct)
@@ -312,6 +325,9 @@ class MainWindow(QtGui.QMainWindow):
         self.drawToolBar.addAction(self.nodeCmdAct)
         self.drawToolBar.addAction(self.windcabCmdAct)
         self.drawToolBar.addAction(self.windlibCmdAct)
+
+        self.viewToolBar = self.addToolBar("View")
+        self.viewToolBar.addAction(self.autoAct)
 
     def createStatusBar(self):
         self.statusBar().showMessage("Ready")
