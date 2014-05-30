@@ -122,7 +122,7 @@ class GraphicsWindow(pg.GraphicsView):
         self.mode = 'NoMode'
         self.hairDryerspt1 = None
         self.hairDryerspt2 = None
-        self.colorindex = 0
+        # self.colorindex = 0
 
         # 给风筒定义一个方向指标，如果是朝上就为1,否则为0
         self.directFlg = 1
@@ -199,14 +199,14 @@ class GraphicsWindow(pg.GraphicsView):
                 # fourPts = self.caclTunPts(pg.Point(0,0), 150, 80)
                 t2 = Tunnel(fourPts[0], fourPts[2])
                 t3 = Tunnel(fourPts[3], fourPts[0])
-                t1 = Tunnel(fourPts[0], fourPts[1], True)
-                # t4 = Tunnel(fourPts[1], fourPts[2])
+                t1 = Tunnel(fourPts[0], fourPts[1])
+                t4 = Tunnel(fourPts[1], fourPts[2])
                 # t5 = Tunnel(fourPts[1], pg.Point(1000, 0))
                 # t6 = Tunnel(fourPts[1], fourPts[3])
                 self.vb.addItem(t2)
                 self.vb.addItem(t3)
                 self.vb.addItem(t1)
-                # self.vb.addItem(t4)
+                self.vb.addItem(t4)
                 # self.vb.addItem(t5)
                 # self.vb.addItem(t6)
 
@@ -236,14 +236,17 @@ class GraphicsWindow(pg.GraphicsView):
                 else:
                     fourPts = self.caclTunPts(mousePt, 125, 25)
                 if self.directFlg == 0:
-                    h1 = HairDryer(fourPts[3], fourPts[0], self.colorindex)
-                    h2 = HairDryer(fourPts[0], fourPts[1], self.colorindex)
+                    h1 = HairDryer(fourPts[3], fourPts[0])
+                    h2 = HairDryer(fourPts[0], fourPts[1])
+                    h3 = HairDryer(fourPts[3], fourPts[1])
                 elif self.directFlg == 1:
-                    h1 = HairDryer(fourPts[0], fourPts[2], self.colorindex)
-                    h2 = HairDryer(fourPts[0], fourPts[1], self.colorindex)
+                    h1 = HairDryer(fourPts[0], fourPts[2])
+                    h2 = HairDryer(fourPts[1], fourPts[0])
+                    h3 = HairDryer(fourPts[1], fourPts[2])
                 self.vb.addItem(h1)
                 self.vb.addItem(h2)
-                self.colorindex = self.colorindex + 1
+                self.vb.addItem(h3)
+                # self.colorindex = self.colorindex + 1
                 self.vb.scene().update()
             if self.mode == 'InsertFan':
                 self.insertFan(evt)
@@ -252,25 +255,19 @@ class GraphicsWindow(pg.GraphicsView):
 
     def insertFan(self, ev):
         #获取鼠标下的Items
-        # focusitems = []
-        # for t in findAllTunnels(self.vb):
-        #     # if t.selectFlag is True:
+        #判断是否在鼠标之下
+        # t = None
+        # for t in findAllHairDryer(self.vb):
         #     if t.isUnderMouse():
-        #         focusitems.append(t)
-        #         t.grabMouse()
-        #     # t.ungrabMouse()
-        #         print "t", t
-        # print "grab", self.scene().mouseGrabberItem()
-        #
-        # for fi in focusitems:
-        #     self.scene().mouseGrabberItem().ungrabMouse()
-        #     print "ungrab",self.scene().mouseGrabberItem()
+        #         break
 
-        mousePt = self.vb.mapSceneToView(ev.scenePos())
+        #以下方法简单
+        #经过测试，下面这种方法不精确，因为在Tunnel中返回的boundingRect()不是精确的
+        #下面这种方法获取的正是返回的矩形范围内的Items，而上面的方法获得的是鼠标之下的
         items = self.scene().items(ev.scenePos())  #这种获取可能会更好一点
-        t = self.getTunnel(items)
+        mousePt = self.vb.mapSceneToView(ev.scenePos())
+        t = self.getHairDryer(items)
         if not t is None:
-            print t
             f = Fan(5, 5)
             # f.paint()
             arrow = f.drawArrow(mousePt, t.spt, t.ept)
@@ -278,10 +275,10 @@ class GraphicsWindow(pg.GraphicsView):
             f.drawFan()
             self.vb.addItem(f)
 
-    def getTunnel(self,items):
+    def getHairDryer(self,items):
         t = None
         for item in items:
-            if isinstance(item, Tunnel):
+            if isinstance(item, HairDryer):
                 t = item
                 break
         return t
@@ -293,9 +290,7 @@ class GraphicsWindow(pg.GraphicsView):
         for pt in networks.keys():
             junctionClosure(networks[pt], pt)
 
-        #
         if not all(global_inst.win_.vb.autoRangeEnabled()):
-            # global_inst.mw_.autoAct.setEnabled(True)
             self.parent().autoAct.setEnabled(True)
         else:
             self.parent().autoAct.setEnabled(False)
@@ -308,6 +303,13 @@ def findAdjTunnels(vb, pt):
             if pt == item.spt or pt == item.ept:
                 tunnels.append(item)
     return tunnels
+
+def findAllHairDryer(vb):
+    hairDryer = []
+    for item in vb.addedItems:
+        if isinstance(item, HairDryer):
+            hairDryer.append(item)
+    return hairDryer
 
 
 def findAllTunnels(vb):

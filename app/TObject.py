@@ -44,7 +44,7 @@ class TObject(pg.GraphicsObject):
             return
         self.mouseHovering = hover
         if hover:
-            self.currentPen = QtGui.QPen(QtCore.Qt.darkCyan, 0, QtCore.Qt.SolidLine, QtCore.Qt.SquareCap)
+            self.currentPen = QtGui.QPen(QtCore.Qt.darkCyan, 0.8, QtCore.Qt.SolidLine, QtCore.Qt.SquareCap)
         else:
             self.currentPen = self.pen
         self.update()

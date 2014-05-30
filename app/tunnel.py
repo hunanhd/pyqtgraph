@@ -53,18 +53,30 @@ class Tunnel(TObject):
             p.drawLine(self.ept1, self.ept2)
 
         #绘制boundingRect
-        # p.drawRect(self.bound)
+        # p.setPen(pg.fn.mkPen('g'))
+        # p.drawRect(self.boundingRect())
+        # p.setPen(pg.fn.mkPen('w'))
 
     def shape(self):
-        polg = QtGui.QPolygonF()
-        polg.append(self.spt)
-        polg.append(self.spt1)
-        polg.append(self.ept1)
-        polg.append(self.ept)
-        polg.append(self.ept2)
-        polg.append(self.spt2)
+        # polg = QtGui.QPolygonF()
+        # polg.append(self.spt)
+        # polg.append(self.spt1)
+        # polg.append(self.ept1)
+        # polg.append(self.ept)
+        # polg.append(self.ept2)
+        # polg.append(self.spt2)
+        # path = QtGui.QPainterPath()
+        # path.addPolygon(polg)
+        # self.path = path
+        # return path
+
         path = QtGui.QPainterPath()
-        path.addPolygon(polg)
+        path.moveTo(self.spt)
+        path.lineTo(self.spt1)
+        path.lineTo(self.ept1)
+        path.lineTo(self.ept)
+        path.lineTo(self.ept2)
+        path.lineTo(self.spt2)
         return path
 
     def boundingRect(self):

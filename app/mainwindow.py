@@ -13,7 +13,7 @@ class MainWindow(QtGui.QMainWindow):
         super(MainWindow, self).__init__()
         self.init()
         self.setWindowTitle(self.tr("MainWindown Title"))
-        # self.resize(900, 600)
+        self.resize(900, 600)
         self.setWindowState(QtCore.Qt.WindowMaximized)
         self.win = GraphicsWindow()
         self.setCentralWidget(self.win)

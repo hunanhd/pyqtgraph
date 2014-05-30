@@ -3,7 +3,7 @@
 from tunnel import *
 
 class HairDryer(Tunnel):
-    def __init__(self, start, end, i):
+    def __init__(self, start, end):
         super(HairDryer,self).__init__(start, end)
         self.spt = start
         self.ept = end
@@ -12,10 +12,9 @@ class HairDryer(Tunnel):
         self.ept1 = None
         self.ept2 = None
         self.width = 2
-        self.colorindex = i % 8
+        # self.colorindex = i % 8
         self.caclVector()
-        self.colors = [QtCore.Qt.red, QtCore.Qt.white, QtCore.Qt.magenta, QtCore.Qt.yellow, QtCore.Qt.darkRed, QtCore.Qt.cyan, QtCore.Qt.gray, QtCore.Qt.blue]
-        self.currentPen = QtGui.QPen(self.colors[self.colorindex], 0, QtCore.Qt.SolidLine, QtCore.Qt.SquareCap)
+        self.currentPen = QtGui.QPen(QtCore.Qt.white, 0, QtCore.Qt.SolidLine, QtCore.Qt.SquareCap)
 
     def paint(self, p, *args):
         #设置画笔为NoPen,即不绘制多边形的边框(border)

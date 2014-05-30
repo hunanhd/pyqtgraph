@@ -53,7 +53,6 @@ class Fan(QtGui.QGraphicsPathItem):
     def drawFan(self):
         path = QtGui.QPainterPath()
         pt1 = vp_add(self.v * self.width * 0.25, self.spt)
-        print self.spt
         v = v_rotate(self.v, -90)
         pt2 = vp_add(v * self.lenth * 0.25, pt1)
         path.moveTo(pt1)
