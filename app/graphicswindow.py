@@ -122,7 +122,7 @@ class GraphicsWindow(pg.GraphicsView):
         self.mode = 'NoMode'
         self.hairDryerspt1 = None
         self.hairDryerspt2 = None
-        # self.colorindex = 0
+        self.colorindex = 0
 
         # 给风筒定义一个方向指标，如果是朝上就为1,否则为0
         self.directFlg = 1
@@ -246,7 +246,7 @@ class GraphicsWindow(pg.GraphicsView):
                 self.vb.addItem(h1)
                 self.vb.addItem(h2)
                 self.vb.addItem(h3)
-                # self.colorindex = self.colorindex + 1
+                self.colorindex = self.colorindex + 1
                 self.vb.scene().update()
             if self.mode == 'InsertFan':
                 self.insertFan(evt)
@@ -254,34 +254,44 @@ class GraphicsWindow(pg.GraphicsView):
         evt.accept()
 
     def insertFan(self, ev):
-        #获取鼠标下的Items
-        #判断是否在鼠标之下
-        # t = None
-        # for t in findAllHairDryer(self.vb):
-        #     if t.isUnderMouse():
-        #         break
-
-        #以下方法简单
+        #以下获取Items方法简单，但是有待研究
         #经过测试，下面这种方法不精确，因为在Tunnel中返回的boundingRect()不是精确的
         #下面这种方法获取的正是返回的矩形范围内的Items，而上面的方法获得的是鼠标之下的
-        items = self.scene().items(ev.scenePos())  #这种获取可能会更好一点
+        # items = self.scene().items(ev.scenePos())  #这种获取可能会更好一点
         mousePt = self.vb.mapSceneToView(ev.scenePos())
-        t = self.getHairDryer(items)
-        if not t is None:
+        # t = self.getTunnel(items)
+        h = self.getHairDryer()
+        if not h is None:
             f = Fan(5, 5)
             # f.paint()
-            arrow = f.drawArrow(mousePt, t.spt, t.ept)
+            arrow = f.drawArrow(mousePt, h.spt, h.ept)
             self.vb.addItem(arrow)
             f.drawFan()
             self.vb.addItem(f)
+        else:
+            msg = QtGui.QMessageBox()
+            msg.setWindowTitle (self.tr("Warming"))
+            msg.setText(self.tr("Fan must be in the hairDryer"))
+            msg.exec_()
 
-    def getHairDryer(self,items):
-        t = None
-        for item in items:
-            if isinstance(item, HairDryer):
-                t = item
+    def getHairDryer(self):
+        #获取鼠标下的Items
+        #目前使用下面的方法
+        h = None
+        for hairDryer in findAllHairDryer(self.vb):
+            if hairDryer.mouseHovering == True:
+                h = hairDryer
                 break
-        return t
+        return h
+
+    # def getTunnel(self,items):
+    #     t = None
+    #     for item in items:
+    #         if isinstance(item, Tunnel):
+    #             t = item
+    #             print t
+    #             break
+    #     return t
 
     def auto_junction(self):
         # print '[%s]auto_junction is called' % time.ctime()
@@ -290,7 +300,9 @@ class GraphicsWindow(pg.GraphicsView):
         for pt in networks.keys():
             junctionClosure(networks[pt], pt)
 
+        #
         if not all(global_inst.win_.vb.autoRangeEnabled()):
+            # global_inst.mw_.autoAct.setEnabled(True)
             self.parent().autoAct.setEnabled(True)
         else:
             self.parent().autoAct.setEnabled(False)
