@@ -6,11 +6,14 @@ import pyqtgraph as pg
 from hairdryer import HairDryer
 from fan import Fan
 
+
 class CustomViewBox(pg.ViewBox):
     def __init__(self, *args, **kwds):
         pg.ViewBox.__init__(self, *args, **kwds)
         self.disableAutoRange(pg.ViewBox.XYAxes)
         self.setAspectLocked(True, ratio=None)
+        self.state['targetRange'] = [[0, 300], [0, 200]]
+        self.state['viewRange'] = [[0,300],[0,200]]
 
     def resizeEvent(self,ev):
         self.setPos(0,0)
@@ -104,6 +107,7 @@ class CustomViewBox(pg.ViewBox):
         self.menu.addAction(remAllAct)
         self.menu.addAction(selAllAct)
         return self.menu
+
     def autoBtnClicked(self):
         self.enableAutoRange()
 
@@ -114,7 +118,7 @@ class CustomViewBox(pg.ViewBox):
 class GraphicsWindow(pg.GraphicsView):
     def __init__(self, title=None, size=(800, 800), **kargs):
         super(GraphicsWindow, self).__init__(**kargs)
-        self.modes = ['InsertTunnel', 'InsertHairDryer', 'InsertFan', 'InsertNode','InsertFan' 'NoMode']
+        self.modes = ['InsertTunnel', 'InsertHairDryer', 'InsertFan', 'InsertNode', 'InsertFan' 'NoMode']
         self.mode = 'NoMode'
         self.hairDryerspt1 = None
         self.hairDryerspt2 = None
@@ -164,6 +168,7 @@ class GraphicsWindow(pg.GraphicsView):
 
     def setFanMode(self):
         self.mode = 'InsertFan'
+
     # def setMainWindow(self, mw):
     #     self.mw = mw
 
@@ -193,10 +198,10 @@ class GraphicsWindow(pg.GraphicsView):
             if self.mode == 'InsertTunnel':
                 # fourPts = self.caclTunPts(pg.Point(0,0), 150, 80)
                 t2 = Tunnel(fourPts[0], fourPts[2])
-                t3 = Tunnel(fourPts[0], fourPts[3])
+                t3 = Tunnel(fourPts[3], fourPts[0])
                 t1 = Tunnel(fourPts[0], fourPts[1], True)
                 # t4 = Tunnel(fourPts[1], fourPts[2])
-                # t5 = Tunnel(fourPts[1], pg.Point(1000,0))
+                # t5 = Tunnel(fourPts[1], pg.Point(1000, 0))
                 # t6 = Tunnel(fourPts[1], fourPts[3])
                 self.vb.addItem(t2)
                 self.vb.addItem(t3)
@@ -231,7 +236,7 @@ class GraphicsWindow(pg.GraphicsView):
                 else:
                     fourPts = self.caclTunPts(mousePt, 125, 25)
                 if self.directFlg == 0:
-                    h1 = HairDryer(fourPts[0], fourPts[3], self.colorindex)
+                    h1 = HairDryer(fourPts[3], fourPts[0], self.colorindex)
                     h2 = HairDryer(fourPts[0], fourPts[1], self.colorindex)
                 elif self.directFlg == 1:
                     h1 = HairDryer(fourPts[0], fourPts[2], self.colorindex)
@@ -241,17 +246,45 @@ class GraphicsWindow(pg.GraphicsView):
                 self.colorindex = self.colorindex + 1
                 self.vb.scene().update()
             if self.mode == 'InsertFan':
-                self.insertFan(mousePt)
+                self.insertFan(evt)
         self.mode = 'NoMode'
         evt.accept()
 
-    def insertFan(self,pt):
-        f = Fan(pt)
-        QtCore.Qt.MouseButtons
-        for t in self.scene().items():
-            print t.acceptedMouseButtons()
-        print self.scene().selectedItems()
-        print self.scene().mouseGrabberItem()
+    def insertFan(self, ev):
+        #获取鼠标下的Items
+        # focusitems = []
+        # for t in findAllTunnels(self.vb):
+        #     # if t.selectFlag is True:
+        #     if t.isUnderMouse():
+        #         focusitems.append(t)
+        #         t.grabMouse()
+        #     # t.ungrabMouse()
+        #         print "t", t
+        # print "grab", self.scene().mouseGrabberItem()
+        #
+        # for fi in focusitems:
+        #     self.scene().mouseGrabberItem().ungrabMouse()
+        #     print "ungrab",self.scene().mouseGrabberItem()
+
+        mousePt = self.vb.mapSceneToView(ev.scenePos())
+        items = self.scene().items(ev.scenePos())  #这种获取可能会更好一点
+        t = self.getTunnel(items)
+        if not t is None:
+            print t
+            f = Fan(5, 5)
+            # f.paint()
+            arrow = f.drawArrow(mousePt, t.spt, t.ept)
+            self.vb.addItem(arrow)
+            f.drawFan()
+            self.vb.addItem(f)
+
+    def getTunnel(self,items):
+        t = None
+        for item in items:
+            if isinstance(item, Tunnel):
+                t = item
+                break
+        return t
 
     def auto_junction(self):
         # print '[%s]auto_junction is called' % time.ctime()

@@ -10,11 +10,11 @@ class Axis(QtGui.QGraphicsPathItem):
         self.l = l
         path = QtGui.QPainterPath()
         path.moveTo(0, 0)
-        path.lineTo(0, -l)
+        path.lineTo(0, l)
         path.moveTo(0, 0)
         path.lineTo(l, 0)
         angle = 150
-        arrowL = 20
+        arrowL = 10
 
         path.moveTo(l, 0)
         v = v_rotate(pg.Vector(1, 0), -angle)
@@ -28,21 +28,23 @@ class Axis(QtGui.QGraphicsPathItem):
         pt = vp_add(v, pg.Point(l, 0))
         path.lineTo(pt)
 
-        path.moveTo(0, -l)
-        v = v_rotate(pg.Vector(0, -1), angle)
+        path.moveTo(0, l)
+        v = v_rotate(pg.Vector(0, 1), angle)
         v = v * arrowL
-        pt = vp_add(v, pg.Point(0, -l))
+        pt = vp_add(v, pg.Point(0, l))
         path.lineTo(pt)
 
-        path.moveTo(0, -l)
-        v = v_rotate(pg.Vector(0, -1), -angle)
+        path.moveTo(0, l)
+        v = v_rotate(pg.Vector(0, 1), -angle)
         v = v * arrowL
-        pt = vp_add(v, pg.Point(0, -l))
+        pt = vp_add(v, pg.Point(0, l))
         path.lineTo(pt)
         self.setPath(path)
         self.setPen(pg.fn.mkPen(color='w'))
-        self.setFlags(self.flags() | self.ItemIgnoresTransformations)
-        # self.setBrush(pg.fn.mkBrush()
+        if self.opts['pxMode']:
+            self.setFlags(self.flags() | self.ItemIgnoresTransformations)
+        else:
+            self.setFlags(self.flags() & ~self.ItemIgnoresTransformations)
 
     def paint(self, p, *args):
         p.setRenderHint(QtGui.QPainter.Antialiasing)

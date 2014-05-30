@@ -51,31 +51,59 @@ def v_angle(b, a=pg.Vector(1, 0)):
     # return v_angle_1(b, a)
     return v_angle_2(b, a)
 
+#点到直线的最进点计算
+def pointToLine(lineSpt,lineEpt,pt):
+    pedal = pg.Point()
+    line = QtCore.QLineF(lineSpt,lineEpt)
+    v = pg.Vector(lineEpt - lineSpt)
+    # angle = v_angle_2(v)
+    # angle = angle * 180 / math.pi
+    # v.normalize()
+    v = v_rotate(v,90)
+    vPoint = vp_add(v,pt)
+    ptLine = QtCore.QLineF(pt, vPoint)
+    if line.intersect(ptLine,pedal) is QtCore.QLineF.NoIntersection:
+        # print vpoint
+        # 这里面应该可以什么都不用处理，因为intersect函数会返回pedal，
+        # 这个点就是交点，不管是外交点还是内交点，都可以返回
+        vPoint = vp_add(-v,pt)
+    # print "vPoint:",vPoint
+    # print "pedal0:",pedal
+    return pedal
+
+def pointToLineTest():
+    pt1 = pg.Point(0,-1)
+    pt2 = pg.Point(-1,0)
+    pt3 = pg.Point(0,0)
+    print pointToLine(pt2,pt1,pt3)
+    print pointToLine(pt1,pt2,pt3)
 
 if __name__ == '__main__':
-    spt = pg.Point(0, 0)
-    ept = pg.Point(1, 1)
-    v = pg.Vector(ept - spt)
-
-    tr = pg.SRTTransform3D()
-    tr.setRotate(90, (0, 0, 1))
-    v1 = tr.map(v)
-
-    line = QtCore.QLineF(spt, ept)
-    pt = pg.Point()
-
-    v1 = pg.Vector(-1, 1)
-    print "v-->v1:", v_angle2(v, v1)
-    print "v1-->v:", v_angle2(v1, v)
-    print line.intersect(QtCore.QLineF(pg.Point(-1, 0), pg.Point(0, -1)), pt)
-    print pt
-    print pg.Vector(spt) + v1
-
-    print v_rotate(pg.Vector(-1, 0), 90)
-    print v_rotate(pg.Vector(1, 0), 90)
-    print v_rotate(pg.Vector(0, 1, 0), 90)
-    print v_rotate(pg.Vector(0, -1), 90)
-
-    v1 = pg.Vector(0, 1)
-    v2 = pg.Vector(0, -1)
-    print pg.Vector.crossProduct(v1, v2)
+    # spt = pg.Point(0, 0)
+    # ept = pg.Point(1, 1)
+    # v = pg.Vector(ept - spt)
+    #
+    # tr = pg.SRTTransform3D()
+    # tr.setRotate(90, (0, 0, 1))
+    # v1 = tr.map(v)
+    #
+    # line = QtCore.QLineF(spt, ept)
+    # pt = pg.Point()
+    #
+    # v1 = pg.Vector(-1, 1)
+    # print "v-->v1:", v_angle2(v, v1)
+    # print "v1-->v:", v_angle2(v1, v)
+    # print line.intersect(QtCore.QLineF(pg.Point(-1, 0), pg.Point(0, -1)), pt)
+    # print pt
+    # print pg.Vector(spt) + v1
+    #
+    # print v_rotate(pg.Vector(-1, 0), 90)
+    # print v_rotate(pg.Vector(1, 0), 90)
+    # print v_rotate(pg.Vector(0, 1, 0), 90)
+    # print v_rotate(pg.Vector(0, -1), 90)
+    #
+    # v1 = pg.Vector(0, 1)
+    # v2 = pg.Vector(0, -1)
+    # print pg.Vector.crossProduct(v1, v2)
+    # pointToLineTest()
+    pass

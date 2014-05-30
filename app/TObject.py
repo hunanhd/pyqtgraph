@@ -12,6 +12,7 @@ class TObject(pg.GraphicsObject):
         super(TObject, self).__init__()
         self.mouseHovering = False
         self.selectFlag = False
+        self.grabMouse()
         self.currentPen = QtGui.QPen(QtCore.Qt.green, 0, QtCore.Qt.SolidLine, QtCore.Qt.SquareCap)
     def hoverEvent(self, ev):
         hover = False
