@@ -53,7 +53,7 @@ def junctionClosureImpl(junctionPt, ges):
             v3 = -v3
         ges[i].tunnel.trimSides(junctionPt, v3)
         ges[i + 1].tunnel.trimSides(junctionPt, v3)
-
+    ges = None
 
 #修改函数,去掉vb参数
 #注:巷道闭合的处理与巷道的查找应该属于不同的模块
@@ -66,3 +66,4 @@ def junctionClosure(tunnels, pt):
         ges.sort(key=f)
         #处理闭合
         junctionClosureImpl(pt, ges)
+    ges = None

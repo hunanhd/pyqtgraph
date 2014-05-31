@@ -5,7 +5,7 @@ from junction import *
 import pyqtgraph as pg
 from hairdryer import HairDryer
 from fan import Fan
-
+import gc
 
 class CustomViewBox(pg.ViewBox):
     def __init__(self, *args, **kwds):
@@ -123,10 +123,12 @@ class GraphicsWindow(pg.GraphicsView):
         self.hairDryerspt1 = None
         self.hairDryerspt2 = None
         self.colorindex = 0
-
+        # gc.set_threshold(10, 5, 2)
         # 给风筒定义一个方向指标，如果是朝上就为1,否则为0
         self.directFlg = 1
         self.resize(*size)
+        gc.set_threshold(3,2,1)
+        gc.set_debug(gc.DEBUG_LEAK | gc.DEBUG_COLLECTABLE | gc.DEBUG_UNCOLLECTABLE | gc.DEBUG_INSTANCES | gc.DEBUG_OBJECTS | gc.DEBUG_SAVEALL)
         self.setBackground((39, 40, 34))
         if title is not None:
             self.setWindowTitle(title)
@@ -141,18 +143,19 @@ class GraphicsWindow(pg.GraphicsView):
         self.axis.setRotation(0)
         self.vb.addItem(self.axis)
 
-        self.vLine = pg.InfiniteLine(angle=90, movable=False)
-        self.hLine = pg.InfiniteLine(angle=0, movable=False)
-        self.vb.addItem(self.vLine, ignoreBounds=True)
-        self.vb.addItem(self.hLine, ignoreBounds=True)
+        # 添加十字光标
+        # self.vLine = pg.InfiniteLine(angle=90, movable=False)
+        # self.hLine = pg.InfiniteLine(angle=0, movable=False)
+        # self.vb.addItem(self.vLine, ignoreBounds=True)
+        # self.vb.addItem(self.hLine, ignoreBounds=True)
 
         self.proxy = pg.SignalProxy(
             self.vb.scene().sigMouseMoved, rateLimit=60, slot=self.sceneMouseMoved)
         self.vb.scene().sigMouseClicked.connect(self.sceneMousePressed)
 
-        self.junction_timer = QtCore.QTimer(self)
-        self.junction_timer.timeout.connect(self.auto_junction)
-        self.junction_timer.start(0)
+        # self.junction_timer = QtCore.QTimer(self)
+        # self.junction_timer.timeout.connect(self.auto_junction)
+        # self.junction_timer.start(0)
 
     def setTunnelMode(self):
         self.mode = 'InsertTunnel'
@@ -180,9 +183,16 @@ class GraphicsWindow(pg.GraphicsView):
             self.msg = "x=%0.1f,y=%0.1f" % (mousePoint.x(), mousePoint.y())
             self.parent().statusBar().showMessage(self.msg)
 
-            self.vLine.setPos(mousePoint.x())
-            self.hLine.setPos(mousePoint.y())
+            # self.vLine.setPos(mousePoint.x())
+            # self.hLine.setPos(mousePoint.y())
             self.vb.scene().update()
+        # print gc.collect()
+        # print gc.collect()
+        # for x in gc.garbage:
+        #     s = str(x)
+        #     if isinstance(x, Tunnel):
+        #         print x
+        #     print type(x),"\n  ", s
 
     def caclTunPts(self, pt, l, h):
         fourPts = [pt]
@@ -209,7 +219,7 @@ class GraphicsWindow(pg.GraphicsView):
                 self.vb.addItem(t4)
                 # self.vb.addItem(t5)
                 # self.vb.addItem(t6)
-
+                self.auto_junction()
                 # junctionClosure([t1,t4,t5,t6], fourPts[1])
                 # junctionClosure([t2,t4], fourPts[2])
                 # junctionClosure([t2,t3,t1], fourPts[0])
@@ -299,7 +309,7 @@ class GraphicsWindow(pg.GraphicsView):
         # print '点个数:',len(networks)
         for pt in networks.keys():
             junctionClosure(networks[pt], pt)
-
+        networks = None
         #
         if not all(global_inst.win_.vb.autoRangeEnabled()):
             # global_inst.mw_.autoAct.setEnabled(True)
@@ -347,4 +357,5 @@ def buildNetworks(vb):
             networks[t.ept] = [t]
         else:
             networks[t.ept].append(t)
+    tunnels = None
     return networks
