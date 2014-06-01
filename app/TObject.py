@@ -12,7 +12,6 @@ class TObject(pg.GraphicsObject):
         super(TObject, self).__init__()
         self.mouseHovering = False
         self.selectFlag = False
-        self.grabMouse()
         self.currentPen = QtGui.QPen(QtCore.Qt.green, 0, QtCore.Qt.SolidLine, QtCore.Qt.SquareCap)
     def hoverEvent(self, ev):
         hover = False
@@ -44,7 +43,7 @@ class TObject(pg.GraphicsObject):
             return
         self.mouseHovering = hover
         if hover:
-            self.currentPen = QtGui.QPen(QtCore.Qt.darkCyan, 0.8, QtCore.Qt.SolidLine, QtCore.Qt.SquareCap)
+            self.currentPen = QtGui.QPen(QtCore.Qt.green, 0.4, QtCore.Qt.SolidLine, QtCore.Qt.SquareCap)
         else:
             self.currentPen = self.pen
         self.update()
@@ -63,10 +62,10 @@ class TObject(pg.GraphicsObject):
     def getMenu(self):
         self.menu = QtGui.QMenu()
         self.menu.setTitle("ROI")
-        remAct = QtGui.QAction("Remove selected items", self.menu)
+        remAct = QtGui.QAction(self.tr("Remove selected items"), self.menu)
         remAct.triggered.connect(global_inst.win_.vb.remove)
 
-        cancAct = QtGui.QAction("Cancle", self.menu)
+        cancAct = QtGui.QAction(self.tr("Cancle"), self.menu)
         cancAct.triggered.connect(self.mouseCancleMenue)
 
         if self.selectFlag == False:
@@ -78,7 +77,7 @@ class TObject(pg.GraphicsObject):
         self.menu.addAction(remAct)
         # self.menu.remAct = remAct
 
-        remAllAct = QtGui.QAction("Remove all items", self.menu)
+        remAllAct = QtGui.QAction(self.tr("Remove all items"), self.menu)
         remAllAct.triggered.connect(global_inst.win_.vb.removeAll)
         self.menu.addAction(remAllAct)
         self.menu.addAction(cancAct)
@@ -121,4 +120,3 @@ class TObject(pg.GraphicsObject):
         self.selectFlag = False
         self.currentPen = self.pen
         self.update()
-

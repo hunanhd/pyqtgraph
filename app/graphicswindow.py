@@ -2,114 +2,8 @@
 
 from tidsaxis import *
 from junction import *
-import pyqtgraph as pg
-from hairdryer import HairDryer
-from fan import Fan
+from customVB import *
 import gc
-
-class CustomViewBox(pg.ViewBox):
-    def __init__(self, *args, **kwds):
-        pg.ViewBox.__init__(self, *args, **kwds)
-        self.disableAutoRange(pg.ViewBox.XYAxes)
-        self.setAspectLocked(True, ratio=None)
-        self.state['targetRange'] = [[0, 300], [0, 200]]
-        self.state['viewRange'] = [[0,300],[0,200]]
-
-    def resizeEvent(self,ev):
-        self.setPos(0,0)
-    def remove(self):
-        self.disableAutoRange(pg.ViewBox.XYAxes)
-        for b in findAllTunnels(self):
-            if b.selectFlag:
-                self.removeItem(b)
-
-    def removeAll(self):
-        self.disableAutoRange(pg.ViewBox.XYAxes)
-        for b in findAllTunnels(self):
-            self.removeItem(b)
-
-    def selectAll(self):
-        # self.disableAutoRange(pg.ViewBox.XYAxes)
-        for b in findAllTunnels(self):
-            b.selectFlag = True
-            b.currentPen = QtGui.QPen(QtCore.Qt.yellow, 0, QtCore.Qt.DashLine, QtCore.Qt.SquareCap)
-        self.update()
-
-    ## reimplement right-click to zoom out
-    def mouseClickEvent(self, ev):
-        pg.ViewBox.mouseClickEvent(self, ev)
-
-    def mouseDragEvent(self, ev):
-        pg.ViewBox.mouseDragEvent(self, ev)
-
-    def mouseMoveEvent(self, ev):
-        pg.ViewBox.mouseMoveEvent(self, ev)
-
-    def keyPressEvent(self, ev):
-        if ev.key() == QtCore.Qt.Key_Delete:
-            self.remove()
-        if ev.key() == QtCore.Qt.Key_Escape:
-            for b in findAllTunnels(self):
-                if b.selectFlag:
-                    # b.setSelected(False)
-                    b.selectFlag = False
-                    b.currentPen = b.pen
-                    b.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
-                    self.update()
-        if ev.key() == QtCore.Qt.Key_A and ev.modifiers() & QtCore.Qt.ControlModifier:
-            self.selectAll()
-
-    def contextMenuEnabled(self):
-        return True
-
-    def raiseContextMenu(self, ev):
-        if not self.contextMenuEnabled():
-            return
-        menu = self.getMenu()
-        menu = self.scene().addParentContextMenus(self, menu, ev)
-        pos = ev.screenPos()
-        menu.popup(QtCore.QPoint(pos.x(), pos.y()))
-
-    def getMenu(self):
-        self.menu = QtGui.QMenu()
-        self.menu.setTitle("ViewBox options")
-
-        viewAll = QtGui.QAction("View All", self.menu)
-        viewAll.triggered.connect(self.autoBtnClicked)
-        if global_inst.mw_.autoAct.isEnabled():
-            viewAll.setEnabled(True)
-        else:
-            viewAll.setEnabled(False)
-        self.menu.addAction(viewAll)
-
-        remAct = QtGui.QAction("Remove selected items", self.menu)
-        remAllAct = QtGui.QAction("Remove all items", self.menu)
-        selAllAct = QtGui.QAction("Select all items", self.menu)
-        remAllAct.triggered.connect(self.removeAll)
-        remAct.triggered.connect(self.remove)
-        selAllAct.triggered.connect(self.selectAll)
-
-        allTunnels = findAllTunnels(self)
-        if allTunnels == []:
-            remAct.setEnabled(False)
-            remAllAct.setEnabled(False)
-            selAllAct.setEnabled(False)
-        else:
-            for b in allTunnels:
-                if b.selectFlag == False:
-                    remAct.setEnabled(False)
-                    selAllAct.setEnabled(True)
-                else:
-                    remAct.setEnabled(True)
-                    selAllAct.setEnabled(False)
-            remAllAct.setEnabled(True)
-        self.menu.addAction(remAct)
-        self.menu.addAction(remAllAct)
-        self.menu.addAction(selAllAct)
-        return self.menu
-
-    def autoBtnClicked(self):
-        self.enableAutoRange()
 
 
 #直接从GraphicsView派生
@@ -127,8 +21,8 @@ class GraphicsWindow(pg.GraphicsView):
         # 给风筒定义一个方向指标，如果是朝上就为1,否则为0
         self.directFlg = 1
         self.resize(*size)
-        gc.set_threshold(3,2,1)
-        gc.set_debug(gc.DEBUG_LEAK | gc.DEBUG_COLLECTABLE | gc.DEBUG_UNCOLLECTABLE | gc.DEBUG_INSTANCES | gc.DEBUG_OBJECTS | gc.DEBUG_SAVEALL)
+        # gc.set_threshold(3,2,1)
+        # gc.set_debug(gc.DEBUG_LEAK | gc.DEBUG_COLLECTABLE | gc.DEBUG_UNCOLLECTABLE | gc.DEBUG_INSTANCES | gc.DEBUG_OBJECTS | gc.DEBUG_SAVEALL)
         self.setBackground((39, 40, 34))
         if title is not None:
             self.setWindowTitle(title)
@@ -155,7 +49,7 @@ class GraphicsWindow(pg.GraphicsView):
 
         # self.junction_timer = QtCore.QTimer(self)
         # self.junction_timer.timeout.connect(self.auto_junction)
-        # self.junction_timer.start(0)
+        # self.junction_timer.start(1000 / 33)
 
     def setTunnelMode(self):
         self.mode = 'InsertTunnel'
@@ -186,13 +80,11 @@ class GraphicsWindow(pg.GraphicsView):
             # self.vLine.setPos(mousePoint.x())
             # self.hLine.setPos(mousePoint.y())
             self.vb.scene().update()
-        # print gc.collect()
-        # print gc.collect()
-        # for x in gc.garbage:
-        #     s = str(x)
-        #     if isinstance(x, Tunnel):
-        #         print x
-        #     print type(x),"\n  ", s
+        if not all(self.vb.autoRangeEnabled()):
+            # global_inst.mw_.autoAct.setEnabled(True)
+            self.parent().autoAct.setEnabled(True)
+        else:
+            self.parent().autoAct.setEnabled(False)
 
     def caclTunPts(self, pt, l, h):
         fourPts = [pt]
@@ -206,11 +98,10 @@ class GraphicsWindow(pg.GraphicsView):
             mousePt = self.vb.mapSceneToView(evt.scenePos())
             fourPts = self.caclTunPts(mousePt, 150, 80)
             if self.mode == 'InsertTunnel':
-                # fourPts = self.caclTunPts(pg.Point(0,0), 150, 80)
                 t2 = Tunnel(fourPts[0], fourPts[2])
                 t3 = Tunnel(fourPts[3], fourPts[0])
                 t1 = Tunnel(fourPts[0], fourPts[1])
-                t4 = Tunnel(fourPts[1], fourPts[2])
+                t4 = Tunnel(fourPts[1], fourPts[2],True)
                 # t5 = Tunnel(fourPts[1], pg.Point(1000, 0))
                 # t6 = Tunnel(fourPts[1], fourPts[3])
                 self.vb.addItem(t2)
@@ -219,12 +110,17 @@ class GraphicsWindow(pg.GraphicsView):
                 self.vb.addItem(t4)
                 # self.vb.addItem(t5)
                 # self.vb.addItem(t6)
-                self.auto_junction()
+                # self.auto_junction()
                 # junctionClosure([t1,t4,t5,t6], fourPts[1])
                 # junctionClosure([t2,t4], fourPts[2])
                 # junctionClosure([t2,t3,t1], fourPts[0])
                 # junctionClosure([t6], fourPts[3])
                 # junctionClosure(self.vb, pg.Point(1000,0))
+
+                del t1,t2,t3,t4
+
+                # print gc.collect()
+                # print gc.collect()
 
                 self.vb.scene().update()
 
@@ -256,7 +152,10 @@ class GraphicsWindow(pg.GraphicsView):
                 self.vb.addItem(h1)
                 self.vb.addItem(h2)
                 self.vb.addItem(h3)
-                self.colorindex = self.colorindex + 1
+
+                del h1,h2,h3
+
+                # self.colorindex = self.colorindex + 1
                 self.vb.scene().update()
             if self.mode == 'InsertFan':
                 self.insertFan(evt)
@@ -276,8 +175,8 @@ class GraphicsWindow(pg.GraphicsView):
             # f.paint()
             arrow = f.drawArrow(mousePt, h.spt, h.ept)
             self.vb.addItem(arrow)
-            f.drawFan()
             self.vb.addItem(f)
+            del f
         else:
             msg = QtGui.QMessageBox()
             msg.setWindowTitle (self.tr("Warming"))
@@ -288,74 +187,101 @@ class GraphicsWindow(pg.GraphicsView):
         #获取鼠标下的Items
         #目前使用下面的方法
         h = None
-        for hairDryer in findAllHairDryer(self.vb):
+        all_items = global_inst.win_.vb.addedItems
+        hairDryers = findByClass(all_items,HairDryer)
+        for hairDryer in hairDryers:
             if hairDryer.mouseHovering == True:
                 h = hairDryer
                 break
         return h
 
-    # def getTunnel(self,items):
-    #     t = None
-    #     for item in items:
-    #         if isinstance(item, Tunnel):
-    #             t = item
-    #             print t
-    #             break
-    #     return t
-
-    def auto_junction(self):
-        # print '[%s]auto_junction is called' % time.ctime()
-        networks = buildNetworks(self.vb)
-        # print '点个数:',len(networks)
-        for pt in networks.keys():
-            junctionClosure(networks[pt], pt)
-        networks = None
-        #
-        if not all(global_inst.win_.vb.autoRangeEnabled()):
-            # global_inst.mw_.autoAct.setEnabled(True)
-            self.parent().autoAct.setEnabled(True)
+    def mouseDoubleClickEvent(self, evt):
+        all_items = global_inst.win_.vb.addedItems
+        tunnels = findByClass(all_items,Tunnel)
+        hairDryers = findByClass(all_items,HairDryer)
+        fans = findByClass(all_items,Fan)
+        if len(tunnels) + len(hairDryers) + len(fans) != 0 and evt.button() == QtCore.Qt.LeftButton:
+            self.clickByObct(tunnels,evt)
+            self.clickByObct(hairDryers,evt)
+            self.clickByObct(fans,evt)
         else:
-            self.parent().autoAct.setEnabled(False)
+            QtGui.QGraphicsView.mouseDoubleClickEvent(self, evt)
 
+    def clickByObct(self,items,evt):
+        for item in items:
+            if item.mouseHovering is True:
+                if type(item) == HairDryer:
+                    item.hMouseClickEvent(evt)
+                if type(item) == Tunnel:
+                    item.tMouseClickEvent(evt)
+                if type(item) == Fan:
+                    item.fMouseClickEvent(evt)
+                evt.accept()
+            else:
+                QtGui.QGraphicsView.mouseDoubleClickEvent(self, evt)
 
-def findAdjTunnels(vb, pt):
-    tunnels = []
-    for item in vb.addedItems:
-        if isinstance(item, Tunnel):
-            if pt == item.spt or pt == item.ept:
-                tunnels.append(item)
-    return tunnels
+#---------------------------------------------------------------#
+# 之前用于自动实现巷道闭合的函数，但是这样会导致内存泄漏
+# def auto_junction(self):
+#     return
+#     # print '[%s]auto_junction is called' % time.ctime()
+#     networks = buildNetworks(self.vb)
+#     # print '点个数:',len(networks)
+#     for pt in networks.keys():
+#         junctionClosure(networks[pt], pt)
+#     del networks
+#     # gc.collect()
+#
+#     if not all(global_inst.win_.vb.autoRangeEnabled()):
+#         # global_inst.mw_.autoAct.setEnabled(True)
+#         self.parent().autoAct.setEnabled(True)
+#     else:
+#         self.parent().autoAct.setEnabled(False)
+#---------------------------------------------------------------#
+# def buildNetworks(vb):
+#     #在viewbox中查找所有巷道
+#     tunnels = findAllTunnels(vb)
+#     #记录每一个节点关联的巷道(拓扑关系构成了图或者网络)
+#     networks = {}
+#     for t in tunnels:
+#         if not t.spt in networks:
+#             networks[t.spt] = [t]
+#         else:
+#             networks[t.spt].append(t)
+#
+#         if not t.ept in networks:
+#             networks[t.ept] = [t]
+#         else:
+#             networks[t.ept].append(t)
+#     # tunnels = None
+#     return networks
+#---------------------------------------------------------------#
+#---------------------------------------------------------------#
+# 之前用于查找巷道的函数，现在用是"findGE.py"里面的查找函数
+# def findAdjTunnels(vb, pt):
+#     tunnels = []
+#     for item in vb.addedItems:
+#         if isinstance(item, Tunnel):
+#             if pt == item.spt or pt == item.ept:
+#                 tunnels.append(item)
+#     return tunnels
+#---------------------------------------------------------------#
+# def findAllTunnels(vb):
+#     tunnels = []
+#     for item in vb.addedItems:
+#         if isinstance(item, Tunnel):
+#             tunnels.append(item)
+#     return tunnels
+#
+#
+#---------------------------------------------------------------#
+#---------------------------------------------------------------#
+# 用于查找风筒的函数，现在用"findGE.py"里面的查找函数
+#  def findAllHairDryer(vb):
+#     hairDryer = []
+#     for item in vb.addedItems:
+#         if isinstance(item, HairDryer):
+#             hairDryer.append(item)
+#     return hairDryer
+#---------------------------------------------------------------#
 
-def findAllHairDryer(vb):
-    hairDryer = []
-    for item in vb.addedItems:
-        if isinstance(item, HairDryer):
-            hairDryer.append(item)
-    return hairDryer
-
-
-def findAllTunnels(vb):
-    tunnels = []
-    for item in vb.addedItems:
-        if isinstance(item, Tunnel):
-            tunnels.append(item)
-    return tunnels
-
-
-def buildNetworks(vb):
-    #在viewbox中查找所有巷道
-    tunnels = findAllTunnels(vb)
-    #记录每一个节点关联的巷道(拓扑关系构成了图或者网络)
-    networks = {}
-    for t in tunnels:
-        if not t.spt in networks:
-            networks[t.spt] = [t]
-        else:
-            networks[t.spt].append(t)
-
-        if not t.ept in networks:
-            networks[t.ept] = [t]
-        else:
-            networks[t.ept].append(t)
-    tunnels = None
-    return networks

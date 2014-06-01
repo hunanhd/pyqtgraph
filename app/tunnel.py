@@ -1,9 +1,13 @@
 # -*- coding:utf-8 -*-
 from TObject import *
+from findGE import *
+from junction import *
+import global_inst
+import gc
 
 class Tunnel(TObject):
     def __init__(self, start=0, end=0, isTTunnel=False):
-        pg.GraphicsObject.__init__(self)
+        TObject.__init__(self)
         self.spt = start
         self.ept = end
         self.isTTunnel = isTTunnel
@@ -30,6 +34,7 @@ class Tunnel(TObject):
         p.drawPolygon(self.spt, self.spt2, self.ept2, self.ept, self.ept1, self.spt1)
 
         #设置画笔的颜色(绿色)、线型(实线)
+        #设置显示为反锯齿
         p.setRenderHint(p.Antialiasing)
 
         p.setPen(self.currentPen)
@@ -57,19 +62,22 @@ class Tunnel(TObject):
         # p.drawRect(self.boundingRect())
         # p.setPen(pg.fn.mkPen('w'))
 
-    def shape(self):
-        # polg = QtGui.QPolygonF()
-        # polg.append(self.spt)
-        # polg.append(self.spt1)
-        # polg.append(self.ept1)
-        # polg.append(self.ept)
-        # polg.append(self.ept2)
-        # polg.append(self.spt2)
-        # path = QtGui.QPainterPath()
-        # path.addPolygon(polg)
-        # self.path = path
-        # return path
+#-------------------------------------#
+# 之前shape函数的写法，两种方法的效果一样
+# polg = QtGui.QPolygonF()
+# polg.append(self.spt)
+# polg.append(self.spt1)
+# polg.append(self.ept1)
+# polg.append(self.ept)
+# polg.append(self.ept2)
+# polg.append(self.spt2)
+# path = QtGui.QPainterPath()
+# path.addPolygon(polg)
+# self.path = path
+# return path
+#------------------------------------#
 
+    def shape(self):
         path = QtGui.QPainterPath()
         path.moveTo(self.spt)
         path.lineTo(self.spt1)
@@ -130,7 +138,7 @@ class Tunnel(TObject):
                     self.ept2 = pt2
 
 
-    def mouseDoubleClickEvent(self, evt):
+    def tMouseClickEvent(self, evt):
         self.selectFlag = False
         if evt.button() == QtCore.Qt.LeftButton:
             if self.isTTunnel:
@@ -142,6 +150,24 @@ class Tunnel(TObject):
                 if tpro.exec_() == QtGui.QDialog.Accepted:
                     print tpro.lenthEdit.text()
             evt.accept()
+
+    def itemChange(self, change, value):
+        ret = TObject.itemChange(self, change, value)
+        objs = findByClass(global_inst.win_.vb.addedItems,Tunnel)
+        if change == 21 or change == 22:
+            return ret
+        self.doJunction(self.spt,objs)
+        self.doJunction(self.ept,objs)
+        return ret
+
+    def doJunction(self,pt,objs):
+        tunnels = []
+        for item in objs:
+            if pt == item.spt or pt == item.ept:
+                tunnels.append(item)
+        junctionClosure(tunnels,pt)
+
+
 
 if __name__ == '__main__':
     a = [

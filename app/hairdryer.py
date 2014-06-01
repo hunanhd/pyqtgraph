@@ -27,12 +27,11 @@ class HairDryer(Tunnel):
 
         #设置画笔的颜色、线型(实线)
         p.setRenderHint(p.Antialiasing)
-        #有布置多条风筒的可能，在没有实现修改颜色的时候，选择用不同颜色绘制，每增加一条风筒下标加1
         p.setPen(self.currentPen)
         p.drawLine(self.spt1, self.ept1)
         p.drawLine(self.spt2, self.ept2)
 
-    def mouseDoubleClickEvent(self, evt):
+    def hMouseClickEvent(self, evt):
         self.selectFlag = False
         if evt.button() == QtCore.Qt.LeftButton:
             hdpro = HairDryerDlg()
