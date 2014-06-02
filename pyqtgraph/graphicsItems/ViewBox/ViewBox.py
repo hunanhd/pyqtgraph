@@ -172,8 +172,29 @@ class ViewBox(GraphicsWidget):
         self._itemBoundsCache = weakref.WeakKeyDictionary()
         
         self.locateGroup = None  ## items displayed when using ViewBox.locate(item)
-        
-        self.setFlag(self.ItemClipsChildrenToShape)
+
+        """
+        问题：
+            调用scene的items()或itemAt()函数捕捉当前鼠标下的item时，返回的item不正确
+        解决过程:
+            参考QGraphicsItem.cpp中的contains()
+            bool QGraphicsItem::contains(const QPointF &point) const
+            {
+                return isClipped() ? clipPath().contains(point) : shape().contains(point);
+            }
+            通过测试发现isClipped()永远返回true, 参考qt assitante的文档说明:
+            bool QGraphicsItem::isClipped () const
+              " Returns true if this item is clipped.
+                An item is clipped if it has either set the ItemClipsToShape flag,
+                or if it or any of its ancestors has set the ItemClipsChildrenToShape flag. "
+            意思就是说如果item中设置了ItemClipsToShape标记(通过setFlag()设置)或者
+                          item的parent设置了ItemClipsChildrenToShape标记
+            查找pyqtgraph的源代码发现：
+            在ViewBox.py的__init__()中设置了ItemClipsChildrenToShape标记
+        解决方法:
+            注释掉self.setFlag(self.ItemClipsChildrenToShape)该行
+        """
+        # self.setFlag(self.ItemClipsChildrenToShape)
         self.setFlag(self.ItemIsFocusable, True)  ## so we can receive key presses
         
         ## childGroup is required so that ViewBox has local coordinates similar to device coordinates.
