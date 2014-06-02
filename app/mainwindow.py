@@ -137,74 +137,74 @@ class MainWindow(QtGui.QMainWindow):
         self.createStatusBar()
 
     def createActions(self):
-        self.newAct = QtGui.QAction(QtGui.QIcon(':/images/new.png'), "&New",
+        self.newAct = QtGui.QAction(QtGui.QIcon(':/images/new.png'), self.tr("&New"),
                                     self, shortcut=QtGui.QKeySequence.New,
-                                    statusTip="Create a new file", triggered=self.newFile)
+                                    statusTip=self.tr("Create a new file"), triggered=self.newFile)
 
         self.openAct = QtGui.QAction(QtGui.QIcon(':/images/open.png'),
-                                     "&Open...", self, shortcut=QtGui.QKeySequence.Open,
-                                     statusTip="Open an existing file", triggered=self.open)
+                                     self.tr("&Open..."), self, shortcut=QtGui.QKeySequence.Open,
+                                     statusTip=self.tr("Open an existing file"), triggered=self.open)
 
         self.saveAct = QtGui.QAction(QtGui.QIcon(':/images/save.png'),
-                                     "&Save", self, shortcut=QtGui.QKeySequence.Save,
-                                     statusTip="Save the document to disk", triggered=self.save)
+                                     self.tr("&Save"), self, shortcut=QtGui.QKeySequence.Save,
+                                     statusTip=self.tr("Save the document to disk"), triggered=self.save)
 
-        self.saveAsAct = QtGui.QAction("Save &As...", self,
+        self.saveAsAct = QtGui.QAction(self.tr("Save &As..."), self,
                                        shortcut=QtGui.QKeySequence.SaveAs,
-                                       statusTip="Save the document under a new name",
+                                       statusTip=self.tr("Save the document under a new name"),
                                        triggered=self.saveAs)
 
         self.printAct = QtGui.QAction(QtGui.QIcon(':/images/fileprint.png'),
-                                      "print...", self, shortcut="Ctrl+P",
-                                      statusTip="Print the file", triggered=self.printfile)
+                                      self.tr("print..."), self, shortcut="Ctrl+P",
+                                      statusTip=self.tr("Print the file"), triggered=self.printfile)
 
-        self.closeAct = QtGui.QAction("&Close", self, shortcut="Ctrl+W",
-                                      statusTip="Close this window", triggered=self.close)
+        self.closeAct = QtGui.QAction(self.tr("&Close"), self, shortcut="Ctrl+W",
+                                      statusTip=self.tr("Close this window"), triggered=self.close)
 
-        self.exitAct = QtGui.QAction("E&xit", self, shortcut="Ctrl+Q",
-                                     statusTip="Exit the application",
+        self.exitAct = QtGui.QAction(self.tr("E&xit"), self, shortcut="Ctrl+Q",
+                                     statusTip=self.tr("Exit the application"),
                                      triggered=QtGui.qApp.closeAllWindows)
 
-        self.cutAct = QtGui.QAction(QtGui.QIcon(':/images/cut.png'), "Cu&t",
+        self.cutAct = QtGui.QAction(QtGui.QIcon(':/images/cut.png'), self.tr("Cu&t"),
                                     self, enabled=False, shortcut=QtGui.QKeySequence.Cut,
-                                    statusTip="Cut the current selection's contents to the clipboard", )
+                                    statusTip=self.tr("Cut the current selection's contents to the clipboard"), )
         # triggered=self.textEdit.cut
 
         self.copyAct = QtGui.QAction(QtGui.QIcon(':/images/copy.png'),
-                                     "&Copy", self, enabled=False, shortcut=QtGui.QKeySequence.Copy,
-                                     statusTip="Copy the current selection's contents to the clipboard", )
+                                     self.tr("&Copy"), self, enabled=False, shortcut=QtGui.QKeySequence.Copy,
+                                     statusTip=self.tr("Copy the current selection's contents to the clipboard"), )
         # triggered=self.textEdit.copy
 
         self.pasteAct = QtGui.QAction(QtGui.QIcon(':/images/paste.png'),
-                                      "&Paste", self, shortcut=QtGui.QKeySequence.Paste,
-                                      statusTip="Paste the clipboard's contents into the current selection", )
+                                      self.tr("&Paste"), self, shortcut=QtGui.QKeySequence.Paste,
+                                      statusTip=self.tr("Paste the clipboard's contents into the current selection"), )
 
         self.autoAct = QtGui.QAction(QtGui.QIcon(':/images/auto.png'),
-                                      "&Auto", self, shortcut='A',
-                                      statusTip="Auto Visible", triggered=self.autoViewAll)
+                                      self.tr("&Auto"), self, shortcut='A',
+                                      statusTip=self.tr("Auto Visible"), triggered=self.autoViewAll)
         # triggered=self.textEdit.paste
 
-        self.methodAct = QtGui.QAction("&method", self,
-                                       statusTip="Choose method", triggered=self.methodChoose)
+        self.methodAct = QtGui.QAction(self.tr("&method"), self,
+                                       statusTip=self.tr("Choose method"), triggered=self.methodChoose)
 
-        self.tunnelProAct = QtGui.QAction("&tunnelPro", self,
-                                          statusTip="tunnelPro", triggered=self.tunnelProInput)
-        self.ttunnelProAct = QtGui.QAction("&ttunnelPro", self,
-                                           statusTip="ttunnelPro", triggered=self.ttunnelProInput)
-        self.hairDryerProAct = QtGui.QAction("&hairDryerPro", self,
-                                             statusTip="hairDryerPro", triggered=self.hairDryerProInput)
-        self.windLibAct = QtGui.QAction("&windLib", self,
-                                        statusTip="windLibAct", triggered=self.windLibProInput)
-        self.windCabinetAct = QtGui.QAction("&windCabinet", self,
-                                            statusTip="windCabinet", triggered=self.windCabProInput)
-        self.discontinusRamAct = QtGui.QAction("&discontinusRam", self,
-                                               statusTip="discontinusRam", triggered=self.disRamProInput)
-        self.seriesFanAct = QtGui.QAction("&seriesFan", self,
-                                          statusTip="seriesFan", triggered=self.getSeriesFan)
-        self.drillingVentAct = QtGui.QAction("&drillingVent", self,
-                                             statusTip="drillingVent", triggered=self.drilVentProInput)
-        self.nodeProAct = QtGui.QAction("&nodePro", self,
-                                        statusTip="nodePro", triggered=self.nodeProInput)
+        self.tunnelProAct = QtGui.QAction(self.tr("&tunnelPro"), self,
+                                          statusTip=self.tr("tunnelPro"), triggered=self.tunnelProInput)
+        self.ttunnelProAct = QtGui.QAction(self.tr("&ttunnelPro"), self,
+                                           statusTip=self.tr("ttunnelPro"), triggered=self.ttunnelProInput)
+        self.hairDryerProAct = QtGui.QAction(self.tr("&hairDryerPro"), self,
+                                             statusTip=self.tr("hairDryerPro"), triggered=self.hairDryerProInput)
+        self.windLibAct = QtGui.QAction(self.tr("&windLib"), self,
+                                        statusTip=self.tr("windLibAct"), triggered=self.windLibProInput)
+        self.windCabinetAct = QtGui.QAction(self.tr("&windCabinet"), self,
+                                            statusTip=self.tr("windCabinet"), triggered=self.windCabProInput)
+        self.discontinusRamAct = QtGui.QAction(self.tr("&discontinusRam"), self,
+                                               statusTip=self.tr("discontinusRam"), triggered=self.disRamProInput)
+        self.seriesFanAct = QtGui.QAction(self.tr("&seriesFan"), self,
+                                          statusTip=self.tr("seriesFan"), triggered=self.getSeriesFan)
+        self.drillingVentAct = QtGui.QAction(self.tr("&drillingVent"), self,
+                                             statusTip=self.tr("drillingVent"), triggered=self.drilVentProInput)
+        self.nodeProAct = QtGui.QAction(self.tr("&nodePro"), self,
+                                        statusTip=self.tr("nodePro"), triggered=self.nodeProInput)
 
         self.TunnelCmdAct = QtGui.QAction(
             QtGui.QIcon(':/images/tunnel.png'), self.tr("DrawTunnel"), self,
@@ -238,8 +238,8 @@ class MainWindow(QtGui.QMainWindow):
             statusTip=self.tr("wind cabinet"),
             triggered=self.open)
 
-        self.aboutAct = QtGui.QAction("&About", self,
-                                      statusTip="Show the application's About box",
+        self.aboutAct = QtGui.QAction(self.tr("&About"), self,
+                                      statusTip=self.tr("Show the application's About box"),
                                       triggered=self.about)
 
         self.aboutQtAct = QtGui.QAction("About &Qt", self,
@@ -250,7 +250,7 @@ class MainWindow(QtGui.QMainWindow):
         # self.textEdit.copyAvailable.connect(self.copyAct.setEnabled)
 
     def createMenus(self):
-        self.fileMenu = self.menuBar().addMenu("&File")
+        self.fileMenu = self.menuBar().addMenu(self.tr("&File"))
         self.fileMenu.addAction(self.newAct)
         self.fileMenu.addAction(self.openAct)
         self.fileMenu.addAction(self.saveAct)
@@ -261,14 +261,14 @@ class MainWindow(QtGui.QMainWindow):
         self.fileMenu.addAction(self.closeAct)
         self.fileMenu.addAction(self.exitAct)
 
-        self.editMenu = self.menuBar().addMenu("&Edit")
+        self.editMenu = self.menuBar().addMenu(self.tr("&Edit"))
         self.editMenu.addAction(self.cutAct)
         self.editMenu.addAction(self.copyAct)
         self.editMenu.addAction(self.pasteAct)
 
         self.menuBar().addSeparator()
 
-        self.viewMenu = self.menuBar().addMenu("&View")
+        self.viewMenu = self.menuBar().addMenu(self.tr("&View"))
         self.viewMenu.addAction(self.autoAct)
 
         self.menuBar().addSeparator()
@@ -299,25 +299,25 @@ class MainWindow(QtGui.QMainWindow):
 
         self.menuBar().addSeparator()
 
-        self.helpMenu = self.menuBar().addMenu("&Help")
+        self.helpMenu = self.menuBar().addMenu(self.tr("&Help"))
         self.helpMenu.addAction(self.aboutAct)
         self.helpMenu.addAction(self.aboutQtAct)
 
     def createToolBars(self):
-        self.fileToolBar = self.addToolBar("File")
+        self.fileToolBar = self.addToolBar(self.tr("File"))
         self.fileToolBar.addAction(self.newAct)
         self.fileToolBar.addAction(self.openAct)
         self.fileToolBar.addAction(self.saveAct)
         self.fileToolBar.addAction(self.printAct)
 
         #把editToolBar加载到窗口的右边，可以移动，但是保存设置问题还没有涉及
-        self.editToolBar = QtGui.QToolBar("Edit")
+        self.editToolBar = QtGui.QToolBar(self.tr("Edit"))
         self.addToolBar(QtCore.Qt.RightToolBarArea, self.editToolBar)
         self.editToolBar.addAction(self.cutAct)
         self.editToolBar.addAction(self.copyAct)
         self.editToolBar.addAction(self.pasteAct)
 
-        self.drawToolBar = QtGui.QToolBar("Draw")
+        self.drawToolBar = QtGui.QToolBar(self.tr("Draw"))
         #把drawToolBar加载到窗口的左边，可以移动，但是保存设置问题还没有涉及
         self.addToolBar(QtCore.Qt.LeftToolBarArea, self.drawToolBar)
         self.drawToolBar.addAction(self.TunnelCmdAct)
@@ -327,8 +327,8 @@ class MainWindow(QtGui.QMainWindow):
         self.drawToolBar.addAction(self.windcabCmdAct)
         self.drawToolBar.addAction(self.windlibCmdAct)
 
-        self.viewToolBar = self.addToolBar("View")
+        self.viewToolBar = self.addToolBar(self.tr("View"))
         self.viewToolBar.addAction(self.autoAct)
 
     def createStatusBar(self):
-        self.statusBar().showMessage("Ready")
+        self.statusBar().showMessage(self.tr("Ready"))

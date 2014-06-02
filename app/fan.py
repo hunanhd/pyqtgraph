@@ -102,7 +102,7 @@ class Fan(pg.GraphicsObject):
 #        #     self.setFlags(self.flags() & ~self.ItemIgnoresTransformations)  #
 #------------------------------------------------------------------------------#
 
-    def fMouseClickEvent(self, evt):
+    def mouseDoubleClickEvent(self, evt):
         self.selectFlag = False
         if evt.button() == QtCore.Qt.LeftButton:
             msg = QtGui.QMessageBox()
@@ -179,7 +179,7 @@ class Fan(pg.GraphicsObject):
 
     def getMenu(self):
         self.menu = QtGui.QMenu()
-        self.menu.setTitle("ROI")
+        self.menu.setTitle(self.tr("FanMenu"))
         remAct = QtGui.QAction(self.tr("Remove fan"), self.menu)
         remAct.triggered.connect(global_inst.win_.vb.removeFans)
 

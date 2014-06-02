@@ -31,11 +31,38 @@ class HairDryer(Tunnel):
         p.drawLine(self.spt1, self.ept1)
         p.drawLine(self.spt2, self.ept2)
 
-    def hMouseClickEvent(self, evt):
+    def mouseDoubleClickEvent(self, evt):
         self.selectFlag = False
         if evt.button() == QtCore.Qt.LeftButton:
             hdpro = HairDryerDlg()
             if hdpro.exec_() == QtGui.QDialog.Accepted:
                 print hdpro.lenthEdit.text()
             evt.accept()
+
+#不能成功的翻译，所以重载次函数
+    def getMenu(self):
+        self.menu = QtGui.QMenu()
+        self.menu.setTitle(self.tr("TObjectMenu"))
+        remAct = QtGui.QAction(self.tr("Remove selected items"), self.menu)
+        remAct.triggered.connect(global_inst.win_.vb.remove)
+
+        cancAct = QtGui.QAction(self.tr("Cancle"), self.menu)
+        cancAct.triggered.connect(self.mouseCancleMenue)
+
+        if self.selectFlag == False:
+            remAct.setEnabled(False)
+            cancAct.setEnabled(False)
+        else:
+            remAct.setEnabled(True)
+            cancAct.setEnabled(True)
+        self.menu.addAction(remAct)
+        # self.menu.remAct = remAct
+
+        remAllAct = QtGui.QAction(self.tr("Remove all items"), self.menu)
+        remAllAct.triggered.connect(global_inst.win_.vb.removeAll)
+        self.menu.addAction(remAllAct)
+        self.menu.addAction(cancAct)
+        # self.menu.cancAct = cancAct
+
+        return self.menu
 

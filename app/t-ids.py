@@ -14,6 +14,15 @@ import global_inst
 
 def main():
     app = QtGui.QApplication([])
+
+    translator = QtCore.QTranslator()
+    translator.load("qt_zh_Tids.qm")
+    app.installTranslator(translator)
+
+    translator2 = QtCore.QTranslator()
+    translator2.load("qt_zh_CN.qm")
+    app.installTranslator(translator2)
+
     w = MainWindow()
 
     global_inst.mw_ = w

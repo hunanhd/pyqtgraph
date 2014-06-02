@@ -1,3 +1,4 @@
+#-*- coding:utf-8 -*-
 from ...Qt import QtGui, QtCore
 from ...python2_3 import sortList
 import numpy as np

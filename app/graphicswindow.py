@@ -74,6 +74,7 @@ class GraphicsWindow(pg.GraphicsView):
         pos = evt[0]
         if self.vb.sceneBoundingRect().contains(pos):
             mousePoint = self.vb.mapSceneToView(pos)
+            scenepoint = evt[0]
             self.msg = "x=%0.1f,y=%0.1f" % (mousePoint.x(), mousePoint.y())
             self.parent().statusBar().showMessage(self.msg)
 
@@ -163,16 +164,13 @@ class GraphicsWindow(pg.GraphicsView):
         evt.accept()
 
     def insertFan(self, ev):
-        #以下获取Items方法简单，但是有待研究
-        #经过测试，下面这种方法不精确，因为在Tunnel中返回的boundingRect()不是精确的
-        #下面这种方法获取的正是返回的矩形范围内的Items，而上面的方法获得的是鼠标之下的
-        # items = self.scene().items(ev.scenePos())  #这种获取可能会更好一点
+        #后面有测试代码--->**-**-**
+        # items = self.scene().items(ev.scenePos())  #之前的理解有问题，用这种方法才是高效的
+        item = self.scene().itemAt(ev.scenePos())
         mousePt = self.vb.mapSceneToView(ev.scenePos())
-        # t = self.getTunnel(items)
-        h = self.getHairDryer()
-        if not h is None:
-            f = Fan(5, 5)
-            # f.paint()
+        h = item
+        if type(h) is HairDryer:
+            f = Fan(5,5)
             arrow = f.drawArrow(mousePt, h.spt, h.ept)
             self.vb.addItem(arrow)
             self.vb.addItem(f)
@@ -182,44 +180,76 @@ class GraphicsWindow(pg.GraphicsView):
             msg.setWindowTitle (self.tr("Warming"))
             msg.setText(self.tr("Fan must be in the hairDryer"))
             msg.exec_()
+        # h = self.getHairDryer()
+        # if not h is None:
+        #     f = Fan(5, 5)
+        #     # f.paint()
+        #     arrow = f.drawArrow(mousePt, h.spt, h.ept)
+        #     self.vb.addItem(arrow)
+        #     self.vb.addItem(f)
+        #     del f
+        # else:
+        #     msg = QtGui.QMessageBox()
+        #     msg.setWindowTitle (self.tr("Warming"))
+        #     msg.setText(self.tr("Fan must be in the hairDryer"))
+        #     msg.exec_()
 
-    def getHairDryer(self):
-        #获取鼠标下的Items
-        #目前使用下面的方法
-        h = None
-        all_items = global_inst.win_.vb.addedItems
-        hairDryers = findByClass(all_items,HairDryer)
-        for hairDryer in hairDryers:
-            if hairDryer.mouseHovering == True:
-                h = hairDryer
-                break
-        return h
+    # def getHairDryer(self):
+    #     #获取鼠标下的Items
+    #     #目前使用下面的方法
+    #     h = None
+    #     all_items = global_inst.win_.vb.addedItems
+    #     hairDryers = findByClass(all_items,HairDryer)
+    #     for hairDryer in hairDryers:
+    #         if hairDryer.mouseHovering == True:
+    #             h = hairDryer
+    #             break
+    #     return h
 
-    def mouseDoubleClickEvent(self, evt):
-        all_items = global_inst.win_.vb.addedItems
-        tunnels = findByClass(all_items,Tunnel)
-        hairDryers = findByClass(all_items,HairDryer)
-        fans = findByClass(all_items,Fan)
-        if len(tunnels) + len(hairDryers) + len(fans) != 0 and evt.button() == QtCore.Qt.LeftButton:
-            self.clickByObct(tunnels,evt)
-            self.clickByObct(hairDryers,evt)
-            self.clickByObct(fans,evt)
-        else:
-            QtGui.QGraphicsView.mouseDoubleClickEvent(self, evt)
+    # def mouseDoubleClickEvent(self, evt):
+    #     all_items = global_inst.win_.vb.addedItems
+    #     tunnels = findByClass(all_items,Tunnel)
+    #     hairDryers = findByClass(all_items,HairDryer)
+    #     fans = findByClass(all_items,Fan)
+    #     if len(tunnels) + len(hairDryers) + len(fans) != 0 and evt.button() == QtCore.Qt.LeftButton:
+    #         self.clickByObct(tunnels,evt)
+    #         self.clickByObct(hairDryers,evt)
+    #         self.clickByObct(fans,evt)
+    #     else:
+    #         QtGui.QGraphicsView.mouseDoubleClickEvent(self, evt)
+    #
+    # def clickByObct(self,items,evt):
+    #     for item in items:
+    #         if item.mouseHovering is True:
+    #             if type(item) == HairDryer:
+    #                 item.hMouseClickEvent(evt)
+    #             if type(item) == Tunnel:
+    #                 item.tMouseClickEvent(evt)
+    #             if type(item) == Fan:
+    #                 item.fMouseClickEvent(evt)
+    #             evt.accept()
+    #         else:
+    #             QtGui.QGraphicsView.mouseDoubleClickEvent(self, evt)
 
-    def clickByObct(self,items,evt):
-        for item in items:
-            if item.mouseHovering is True:
-                if type(item) == HairDryer:
-                    item.hMouseClickEvent(evt)
-                if type(item) == Tunnel:
-                    item.tMouseClickEvent(evt)
-                if type(item) == Fan:
-                    item.fMouseClickEvent(evt)
-                evt.accept()
-            else:
-                QtGui.QGraphicsView.mouseDoubleClickEvent(self, evt)
-
+#---------------------------------------------------------------#
+#**-**-**
+# 问题：def insertFan(self, ev)：
+# #以下获取Items方法简单，但是有待研究
+# #经过测试，下面这种方法不精确，因为在Tunnel中返回的boundingRect()不是精确的
+# #下面这种方法获取的正是返回的矩形范围内的Items，而上面的方法获得的是鼠标之下的
+#
+#测试：
+# items = self.scene().items(ev.scenePos())  #这种获取可能会更好一点
+# print 'scene pos:',ev.scenePos()
+# print 'item pos:',ev.pos()
+# for t in items:
+#     print t
+#     print t.contains(ev.pos())
+#     print t.shape().contains(ev.pos())
+#     print t.clipPath().contains(ev.pos())
+#     print t.mapFromScene(ev.scenePos())
+# return
+#---------------------------------------------------------------#
 #---------------------------------------------------------------#
 # 之前用于自动实现巷道闭合的函数，但是这样会导致内存泄漏
 # def auto_junction(self):

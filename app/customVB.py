@@ -114,7 +114,7 @@ class CustomViewBox(pg.ViewBox):
         self.menu = QtGui.QMenu()
         self.menu.setTitle(self.tr("ViewBox options"))
 
-        viewAll = QtGui.QAction("View All", self.menu)
+        viewAll = QtGui.QAction(self.tr("View All"), self.menu)
         viewAll.triggered.connect(self.autoBtnClicked)
         if global_inst.mw_.autoAct.isEnabled():
             viewAll.setEnabled(True)

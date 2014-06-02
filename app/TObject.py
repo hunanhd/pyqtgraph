@@ -13,6 +13,7 @@ class TObject(pg.GraphicsObject):
         self.mouseHovering = False
         self.selectFlag = False
         self.currentPen = QtGui.QPen(QtCore.Qt.green, 0, QtCore.Qt.SolidLine, QtCore.Qt.SquareCap)
+
     def hoverEvent(self, ev):
         hover = False
         if not ev.isExit():
@@ -61,7 +62,7 @@ class TObject(pg.GraphicsObject):
 
     def getMenu(self):
         self.menu = QtGui.QMenu()
-        self.menu.setTitle("ROI")
+        self.menu.setTitle(self.tr("TObjectMenu"))
         remAct = QtGui.QAction(self.tr("Remove selected items"), self.menu)
         remAct.triggered.connect(global_inst.win_.vb.remove)
 
