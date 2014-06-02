@@ -84,6 +84,7 @@ class CustomViewBox(pg.ViewBox):
         if ev.key() == QtCore.Qt.Key_Escape:
             for b in tunnels:
                 if b.selectFlag:
+                    print "yy"
                     b.selectFlag = False
                     b.currentPen = b.pen
                     b.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)

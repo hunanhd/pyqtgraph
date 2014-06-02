@@ -39,30 +39,3 @@ class HairDryer(Tunnel):
                 print hdpro.lenthEdit.text()
             evt.accept()
 
-#不能成功的翻译，所以重载次函数
-    def getMenu(self):
-        self.menu = QtGui.QMenu()
-        self.menu.setTitle(self.tr("TObjectMenu"))
-        remAct = QtGui.QAction(self.tr("Remove selected items"), self.menu)
-        remAct.triggered.connect(global_inst.win_.vb.remove)
-
-        cancAct = QtGui.QAction(self.tr("Cancle"), self.menu)
-        cancAct.triggered.connect(self.mouseCancleMenue)
-
-        if self.selectFlag == False:
-            remAct.setEnabled(False)
-            cancAct.setEnabled(False)
-        else:
-            remAct.setEnabled(True)
-            cancAct.setEnabled(True)
-        self.menu.addAction(remAct)
-        # self.menu.remAct = remAct
-
-        remAllAct = QtGui.QAction(self.tr("Remove all items"), self.menu)
-        remAllAct.triggered.connect(global_inst.win_.vb.removeAll)
-        self.menu.addAction(remAllAct)
-        self.menu.addAction(cancAct)
-        # self.menu.cancAct = cancAct
-
-        return self.menu
-

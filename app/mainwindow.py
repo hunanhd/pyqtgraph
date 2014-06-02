@@ -2,7 +2,7 @@
 
 from PyQt4 import QtCore
 
-from diaLogs import *
+from dialogs import *
 from graphicswindow import GraphicsWindow
 
 import global_inst
@@ -187,23 +187,23 @@ class MainWindow(QtGui.QMainWindow):
         self.methodAct = QtGui.QAction(self.tr("&method"), self,
                                        statusTip=self.tr("Choose method"), triggered=self.methodChoose)
 
-        self.tunnelProAct = QtGui.QAction(self.tr("&tunnelPro"), self,
+        self.tunnelProAct = QtGui.QAction(self.tr("&tunnelPro"), self, enabled=False,
                                           statusTip=self.tr("tunnelPro"), triggered=self.tunnelProInput)
-        self.ttunnelProAct = QtGui.QAction(self.tr("&ttunnelPro"), self,
+        self.ttunnelProAct = QtGui.QAction(self.tr("&ttunnelPro"), self, enabled=False,
                                            statusTip=self.tr("ttunnelPro"), triggered=self.ttunnelProInput)
-        self.hairDryerProAct = QtGui.QAction(self.tr("&hairDryerPro"), self,
+        self.hairDryerProAct = QtGui.QAction(self.tr("&hairDryerPro"), self, enabled=False,
                                              statusTip=self.tr("hairDryerPro"), triggered=self.hairDryerProInput)
-        self.windLibAct = QtGui.QAction(self.tr("&windLib"), self,
+        self.windLibAct = QtGui.QAction(self.tr("&windLib"), self, enabled=False,
                                         statusTip=self.tr("windLibAct"), triggered=self.windLibProInput)
-        self.windCabinetAct = QtGui.QAction(self.tr("&windCabinet"), self,
+        self.windCabinetAct = QtGui.QAction(self.tr("&windCabinet"), self, enabled=False,
                                             statusTip=self.tr("windCabinet"), triggered=self.windCabProInput)
-        self.discontinusRamAct = QtGui.QAction(self.tr("&discontinusRam"), self,
+        self.discontinusRamAct = QtGui.QAction(self.tr("&discontinusRam"), self, enabled=False,
                                                statusTip=self.tr("discontinusRam"), triggered=self.disRamProInput)
-        self.seriesFanAct = QtGui.QAction(self.tr("&seriesFan"), self,
+        self.seriesFanAct = QtGui.QAction(self.tr("&seriesFan"), self, enabled=False,
                                           statusTip=self.tr("seriesFan"), triggered=self.getSeriesFan)
-        self.drillingVentAct = QtGui.QAction(self.tr("&drillingVent"), self,
+        self.drillingVentAct = QtGui.QAction(self.tr("&drillingVent"), self, enabled=False,
                                              statusTip=self.tr("drillingVent"), triggered=self.drilVentProInput)
-        self.nodeProAct = QtGui.QAction(self.tr("&nodePro"), self,
+        self.nodeProAct = QtGui.QAction(self.tr("&nodePro"), self, enabled=False,
                                         statusTip=self.tr("nodePro"), triggered=self.nodeProInput)
 
         self.TunnelCmdAct = QtGui.QAction(

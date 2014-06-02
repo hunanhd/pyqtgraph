@@ -206,12 +206,12 @@
 <context>
     <name>GraphicsWindow</name>
     <message>
-        <location filename="graphicswindow.py" line="183"/>
+        <location filename="graphicswindow.py" line="180"/>
         <source>Warming</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="graphicswindow.py" line="184"/>
+        <location filename="graphicswindow.py" line="181"/>
         <source>Fan must be in the hairDryer</source>
         <translation>风机必须在风筒之内</translation>
     </message>
@@ -221,22 +221,22 @@
     <message>
         <location filename="hairdryer.py" line="45"/>
         <source>TObjectMenu</source>
-        <translation>右键菜单</translation>
+        <translation type="obsolete">右键菜单</translation>
     </message>
     <message>
         <location filename="hairdryer.py" line="46"/>
         <source>Remove selected items</source>
-        <translation>删除选中的图元</translation>
+        <translation type="obsolete">删除选中的图元</translation>
     </message>
     <message>
         <location filename="hairdryer.py" line="49"/>
         <source>Cancle</source>
-        <translation>取消选中</translation>
+        <translation type="obsolete">取消选中</translation>
     </message>
     <message>
         <location filename="hairdryer.py" line="61"/>
         <source>Remove all items</source>
-        <translation>删除所有图元</translation>
+        <translation type="obsolete">删除所有图元</translation>
     </message>
 </context>
 <context>
@@ -669,6 +669,14 @@
     </message>
 </context>
 <context>
+    <name>TO</name>
+    <message>
+        <location filename="TObject.py" line="66"/>
+        <source>Remove selected items</source>
+        <translation type="obsolete">删除选中的图元</translation>
+    </message>
+</context>
+<context>
     <name>TObject</name>
     <message>
         <location filename="TObject.py" line="66"/>
@@ -714,22 +722,22 @@
     <message>
         <location filename="tunnel.py" line="173"/>
         <source>Remove selected items</source>
-        <translation>删除选中的图元</translation>
+        <translation type="obsolete">删除选中的图元</translation>
     </message>
     <message>
         <location filename="tunnel.py" line="172"/>
         <source>TObjectMenu</source>
-        <translation>右键菜单</translation>
+        <translation type="obsolete">右键菜单</translation>
     </message>
     <message>
         <location filename="tunnel.py" line="176"/>
         <source>Cancle</source>
-        <translation>取消选中</translation>
+        <translation type="obsolete">取消选中</translation>
     </message>
     <message>
         <location filename="tunnel.py" line="188"/>
         <source>Remove all items</source>
-        <translation>删除所有图元</translation>
+        <translation type="obsolete">删除所有图元</translation>
     </message>
 </context>
 <context>

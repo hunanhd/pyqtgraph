@@ -63,27 +63,29 @@ class Tunnel(TObject):
 
 #-------------------------------------#
 # 之前shape函数的写法，两种方法的效果一样
-# polg = QtGui.QPolygonF()
-# polg.append(self.spt)
-# polg.append(self.spt1)
-# polg.append(self.ept1)
-# polg.append(self.ept)
-# polg.append(self.ept2)
-# polg.append(self.spt2)
+# 但是考虑到需要捕捉图元中的点，选择用下面的方法
 # path = QtGui.QPainterPath()
-# path.addPolygon(polg)
-# self.path = path
+# path.moveTo(self.spt)
+# path.lineTo(self.spt1)
+# path.lineTo(self.ept1)
+# path.lineTo(self.ept)
+# path.lineTo(self.ept2)
+# path.lineTo(self.spt2)
 # return path
+#
 #------------------------------------#
 
     def shape(self):
+        polg = QtGui.QPolygonF()
+        polg.append(self.spt)
+        polg.append(self.spt1)
+        polg.append(self.ept1)
+        polg.append(self.ept)
+        polg.append(self.ept2)
+        polg.append(self.spt2)
         path = QtGui.QPainterPath()
-        path.moveTo(self.spt)
-        path.lineTo(self.spt1)
-        path.lineTo(self.ept1)
-        path.lineTo(self.ept)
-        path.lineTo(self.ept2)
-        path.lineTo(self.spt2)
+        path.addPolygon(polg)
+        self.path = path
         return path
 
     def boundingRect(self):
@@ -166,36 +168,12 @@ class Tunnel(TObject):
                 tunnels.append(item)
         junctionClosure(tunnels,pt)
 
-#不能成功的翻译，所以重载次函数
-    def getMenu(self):
-        self.menu = QtGui.QMenu()
-        self.menu.setTitle(self.tr("TObjectMenu"))
-        remAct = QtGui.QAction(self.tr("Remove selected items"), self.menu)
-        remAct.triggered.connect(global_inst.win_.vb.remove)
-
-        cancAct = QtGui.QAction(self.tr("Cancle"), self.menu)
-        cancAct.triggered.connect(self.mouseCancleMenue)
-
-        if self.selectFlag == False:
-            remAct.setEnabled(False)
-            cancAct.setEnabled(False)
+    def mouseClickEvent(self, ev):
+        TObject.mouseClickEvent(self,ev)
+        if self.selectFlag is True:
+            print "xx"
         else:
-            remAct.setEnabled(True)
-            cancAct.setEnabled(True)
-        self.menu.addAction(remAct)
-        # self.menu.remAct = remAct
-
-        remAllAct = QtGui.QAction(self.tr("Remove all items"), self.menu)
-        remAllAct.triggered.connect(global_inst.win_.vb.removeAll)
-        self.menu.addAction(remAllAct)
-        self.menu.addAction(cancAct)
-        # self.menu.cancAct = cancAct
-
-        return self.menu
-
-
-
-
+            print "yy"
 if __name__ == '__main__':
     a = [
         JunctionInfo(Tunnel(pg.Point(0, 1), pg.Point(2, 2)), True, pg.Vector(1, -1)),

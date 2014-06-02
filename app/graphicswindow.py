@@ -180,6 +180,11 @@ class GraphicsWindow(pg.GraphicsView):
             msg.setWindowTitle (self.tr("Warming"))
             msg.setText(self.tr("Fan must be in the hairDryer"))
             msg.exec_()
+
+#-------------------------------------------------------------------------#
+        # 之前没有注释ViewBox里面的setFlag是捕捉得到的是boundingRect返回的矩形
+        # 但是邓哥修改注释之后返回的是shape()的矩形框，所以在捕捉的时候能精确，所以
+        # 这些辅助函数是多余的
         # h = self.getHairDryer()
         # if not h is None:
         #     f = Fan(5, 5)
@@ -196,7 +201,7 @@ class GraphicsWindow(pg.GraphicsView):
 
     # def getHairDryer(self):
     #     #获取鼠标下的Items
-    #     #目前使用下面的方法
+    #     #目前使用下面的方法（没有注释setFlag之前的方法）
     #     h = None
     #     all_items = global_inst.win_.vb.addedItems
     #     hairDryers = findByClass(all_items,HairDryer)
@@ -230,7 +235,7 @@ class GraphicsWindow(pg.GraphicsView):
     #             evt.accept()
     #         else:
     #             QtGui.QGraphicsView.mouseDoubleClickEvent(self, evt)
-
+#-------------------------------------------------------------------------#
 #---------------------------------------------------------------#
 #**-**-**
 # 问题：def insertFan(self, ev)：
