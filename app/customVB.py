@@ -36,6 +36,8 @@ class CustomViewBox(pg.ViewBox):
         all_items = global_inst.win_.vb.addedItems
         fans = findByClass(all_items,Fan)
         fan_Arrows = findByClass(all_items,pg.ArrowItem)
+        if fans is None:
+            return
         for fan in fans:
             self.removeItem(fan)
             self.removeItem(fan.arrow)
@@ -58,7 +60,6 @@ class CustomViewBox(pg.ViewBox):
         for b in tunnels:
             b.selectFlag = True
             b.currentPen = QtGui.QPen(QtCore.Qt.yellow, 0, QtCore.Qt.DashLine, QtCore.Qt.SquareCap)
-
         for f in fans:
             f.selectFlag = True
             f.currentPen = QtGui.QPen(QtCore.Qt.yellow, 0, QtCore.Qt.DashLine, QtCore.Qt.SquareCap)
@@ -84,16 +85,15 @@ class CustomViewBox(pg.ViewBox):
         if ev.key() == QtCore.Qt.Key_Escape:
             for b in tunnels:
                 if b.selectFlag:
-                    print "yy"
                     b.selectFlag = False
                     b.currentPen = b.pen
-                    b.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
+                    # b.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
                     self.update()
             for f in fans:
                 if f.selectFlag:
                     f.selectFlag = False
                     f.currentPen = f.pen
-                    f.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
+                    # f.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
                     f.arrow.setStyle(pen = f.pen)
                     self.update()
 
@@ -146,13 +146,16 @@ class CustomViewBox(pg.ViewBox):
             remAllAct.setEnabled(False)
             selAllAct.setEnabled(False)
         else:
+            i = 0
             for b in allTunnels:
-                if b.selectFlag == False:
-                    remAct.setEnabled(False)
-                    selAllAct.setEnabled(True)
-                else:
-                    remAct.setEnabled(True)
-                    selAllAct.setEnabled(False)
+                if b.selectFlag:
+                    i = i+1
+            if i == 0:
+                remAct.setEnabled(False)
+                selAllAct.setEnabled(True)
+            else:
+                remAct.setEnabled(True)
+                selAllAct.setEnabled(False)
             remAllAct.setEnabled(True)
 
         self.menu.addAction(remAct)

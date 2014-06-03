@@ -138,7 +138,7 @@ class GraphicsScene(QtGui.QGraphicsScene):
         #print "mouseGrabberItem: ", self.mouseGrabberItem()
         if self.mouseGrabberItem() is None:  ## nobody claimed press; we are free to generate drag/click events
             self.clickEvents.append(MouseClickEvent(ev))
-            
+
             ## set focus on the topmost focusable item under this click
             items = self.items(ev.scenePos())
             for i in items:
@@ -175,7 +175,7 @@ class GraphicsScene(QtGui.QGraphicsScene):
                             continue
                         init = init or (len(self.dragButtons) == 0)  ## If this is the first button to be dragged, then init=True
                         self.dragButtons.append(int(btn))
-                        
+
                 ## If we have dragged buttons, deliver a drag event
                 if len(self.dragButtons) > 0:
                     if self.sendDragEvent(ev, init=init):

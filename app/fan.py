@@ -180,8 +180,8 @@ class Fan(pg.GraphicsObject):
     def getMenu(self):
         self.menu = QtGui.QMenu()
         self.menu.setTitle(self.tr("FanMenu"))
-        remAct = QtGui.QAction(self.tr("Remove fan"), self.menu)
-        remAct.triggered.connect(global_inst.win_.vb.removeFans)
+        remAct = QtGui.QAction(self.tr("Remove select"), self.menu)
+        remAct.triggered.connect(global_inst.win_.vb.remove)
 
         cancAct = QtGui.QAction(self.tr("Cancle"), self.menu)
         cancAct.triggered.connect(self.mouseCancleMenue)

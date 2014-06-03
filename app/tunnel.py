@@ -55,7 +55,6 @@ class Tunnel(TObject):
         #绘制掘进头(一端封闭)
         if self.isTTunnel:
             p.drawLine(self.ept1, self.ept2)
-
         #绘制boundingRect
         # p.setPen(pg.fn.mkPen('g'))
         # p.drawRect(self.boundingRect())
@@ -170,10 +169,7 @@ class Tunnel(TObject):
 
     def mouseClickEvent(self, ev):
         TObject.mouseClickEvent(self,ev)
-        if self.selectFlag is True:
-            print "xx"
-        else:
-            print "yy"
+
 if __name__ == '__main__':
     a = [
         JunctionInfo(Tunnel(pg.Point(0, 1), pg.Point(2, 2)), True, pg.Vector(1, -1)),

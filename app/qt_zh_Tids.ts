@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.0" language="zh_CN">
+<!DOCTYPE TS><TS version="2.0" language="zh_CN" sourcelanguage="">
 <context>
     <name>CaclAfterDampDlg</name>
     <message>
@@ -99,32 +98,32 @@
 <context>
     <name>CustomViewBox</name>
     <message>
-        <location filename="customVB.py" line="115"/>
+        <location filename="customVB.py" line="116"/>
         <source>ViewBox options</source>
         <translation>选项</translation>
     </message>
     <message>
-        <location filename="customVB.py" line="125"/>
+        <location filename="customVB.py" line="126"/>
         <source>Remove selected items</source>
         <translation>删除选中的图元</translation>
     </message>
     <message>
-        <location filename="customVB.py" line="126"/>
+        <location filename="customVB.py" line="127"/>
         <source>Remove all items</source>
         <translation>删除所有图元</translation>
     </message>
     <message>
-        <location filename="customVB.py" line="127"/>
+        <location filename="customVB.py" line="128"/>
         <source>Remove fans</source>
         <translation>删除所有风机</translation>
     </message>
     <message>
-        <location filename="customVB.py" line="128"/>
+        <location filename="customVB.py" line="129"/>
         <source>Select all items</source>
         <translation>选择所有图元</translation>
     </message>
     <message>
-        <location filename="customVB.py" line="117"/>
+        <location filename="customVB.py" line="118"/>
         <source>View All</source>
         <translation>显示全部图元</translation>
     </message>
@@ -185,7 +184,7 @@
     <message>
         <location filename="fan.py" line="183"/>
         <source>Remove fan</source>
-        <translation>删除风机</translation>
+        <translation type="obsolete">删除选中的风机</translation>
     </message>
     <message>
         <location filename="fan.py" line="186"/>
@@ -201,6 +200,11 @@
         <location filename="fan.py" line="182"/>
         <source>FanMenu</source>
         <translation>右键菜单</translation>
+    </message>
+    <message>
+        <location filename="fan.py" line="183"/>
+        <source>Remove select</source>
+        <translation>删除选中的图元</translation>
     </message>
 </context>
 <context>
@@ -679,22 +683,22 @@
 <context>
     <name>TObject</name>
     <message>
-        <location filename="TObject.py" line="66"/>
+        <location filename="TObject.py" line="99"/>
         <source>Remove selected items</source>
         <translation>删除选中的图元</translation>
     </message>
     <message>
-        <location filename="TObject.py" line="69"/>
+        <location filename="TObject.py" line="102"/>
         <source>Cancle</source>
         <translation>取消选中</translation>
     </message>
     <message>
-        <location filename="TObject.py" line="81"/>
+        <location filename="TObject.py" line="114"/>
         <source>Remove all items</source>
         <translation>删除所有图元</translation>
     </message>
     <message>
-        <location filename="TObject.py" line="65"/>
+        <location filename="TObject.py" line="98"/>
         <source>TObjectMenu</source>
         <translation>右键菜单</translation>
     </message>

@@ -71,6 +71,7 @@ class TObject(pg.GraphicsObject):
             ev.acceptClicks(QtCore.Qt.MidButton)
         else:
             self.setMouseHover(False)
+
     def setMouseHover(self, hover):
         if self.mouseHovering == hover or self.selectFlag:
             return
@@ -128,6 +129,9 @@ class TObject(pg.GraphicsObject):
                 self.selectFlag = False
                 self.currentPen = self.pen
             else:
+                # self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable,True)
+                # self.setSelected(True)
+                # print global_inst.win_.scene().selectedItems()
                 self.selectFlag = True
                 self.currentPen = QtGui.QPen(QtCore.Qt.yellow, 0, QtCore.Qt.DashLine, QtCore.Qt.SquareCap)
             ev.accept()
@@ -138,6 +142,23 @@ class TObject(pg.GraphicsObject):
             ev.ignore()
         self.update()
 
+    # def mousePressEvent(self,ev):
+    #     print "press"
+    #     if ev.button() == QtCore.Qt.RightButton and self.contextMenuEnabled():
+    #         self.raiseContextMenu(ev)
+    #         ev.accept()
+    #     elif global_inst.win_.mode is  'NoMode' and ev.button() == QtCore.Qt.LeftButton:
+    #         if self.selectFlag and (ev.modifiers() & QtCore.Qt.ShiftModifier):
+    #             self.selectFlag = False
+    #             self.currentPen = self.pen
+    #         else:
+    #             self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable,True)
+    #             self.setSelected(True)
+    #             print self.isSelected()
+    #             print global_inst.win_.scene().selectedItems()
+    #             self.selectFlag = True
+    #             self.currentPen = QtGui.QPen(QtCore.Qt.yellow, 0, QtCore.Qt.DashLine, QtCore.Qt.SquareCap)
+    #         ev.accept()
 
     def mouseCancleMenue(self):
         self.selectFlag = False
