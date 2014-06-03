@@ -36,6 +36,9 @@ class MainWindow(QtGui.QMainWindow):
     def autoViewAll(self):
         global_inst.win_.vb.enableAutoRange()
 
+    def test(self):
+        global_inst.win_.vb.remove()
+
     def methodChoose(self):
         mtd = VMethodDlg()
         if mtd.exec_() == QtGui.QDialog.Accepted:
@@ -182,6 +185,10 @@ class MainWindow(QtGui.QMainWindow):
         self.autoAct = QtGui.QAction(QtGui.QIcon(':/images/auto.png'),
                                       self.tr("&Auto"), self, shortcut='A',
                                       statusTip=self.tr("Auto Visible"), triggered=self.autoViewAll)
+
+        self.testAct = QtGui.QAction(self.tr("&Test"), self,
+                                      statusTip=self.tr("test"), triggered=self.test)
+
         # triggered=self.textEdit.paste
 
         self.methodAct = QtGui.QAction(self.tr("&method"), self,
@@ -270,6 +277,7 @@ class MainWindow(QtGui.QMainWindow):
 
         self.viewMenu = self.menuBar().addMenu(self.tr("&View"))
         self.viewMenu.addAction(self.autoAct)
+        self.viewMenu.addAction(self.testAct)
 
         self.menuBar().addSeparator()
 
@@ -329,6 +337,7 @@ class MainWindow(QtGui.QMainWindow):
 
         self.viewToolBar = self.addToolBar(self.tr("View"))
         self.viewToolBar.addAction(self.autoAct)
+        self.viewToolBar.addAction(self.testAct)
 
     def createStatusBar(self):
         self.statusBar().showMessage(self.tr("Ready"))

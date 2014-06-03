@@ -12,7 +12,7 @@ class HairDryer(Tunnel):
         self.ept1 = None
         self.ept2 = None
         self.width = 2
-        self.mouseHovering = False
+        # self.mouseHovering = False
         # self.colorindex = i % 8
         self.caclVector()
         self.currentPen = QtGui.QPen(QtCore.Qt.white, 0, QtCore.Qt.SolidLine, QtCore.Qt.SquareCap)

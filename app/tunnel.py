@@ -18,7 +18,7 @@ class Tunnel(TObject):
         self.width = 15
         self.pen = pg.fn.mkPen('w')
         self.currentPen = self.pen
-        self.mouseHovering = False
+        # self.mouseHovering = False
         self.selectFlag = False
         self.caclVector()
     def __repr__(self):

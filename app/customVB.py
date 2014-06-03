@@ -26,17 +26,20 @@ class CustomViewBox(pg.ViewBox):
         fans = findByClass(all_items,Fan)
         for b in tunnels:
             if b.selectFlag:
+                # b.hide()
                 self.removeItem(b)
         for f in fans:
             if f.selectFlag:
                 self.removeItem(f)
                 self.removeItem(f.arrow)
+                # f.hide()
+                # f.arrow.hide()
 
     def removeFans(self):
         all_items = global_inst.win_.vb.addedItems
         fans = findByClass(all_items,Fan)
         fan_Arrows = findByClass(all_items,pg.ArrowItem)
-        if fans is None:
+        if fans is 0:
             return
         for fan in fans:
             self.removeItem(fan)
@@ -46,9 +49,13 @@ class CustomViewBox(pg.ViewBox):
         self.disableAutoRange(pg.ViewBox.XYAxes)
         all_items = global_inst.win_.vb.addedItems
         tunnels = findByClass(all_items,Tunnel)
-        for t in tunnels:
-            self.removeItem(t)
         self.removeFans()
+        if len(tunnels) is 0:
+            return
+        for t in tunnels:
+            print t
+            t.hide()
+            # self.removeItem(t)
         # for b in findAllTunnels(self):
         #     self.removeItem(b)
 
