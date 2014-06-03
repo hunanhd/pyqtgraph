@@ -181,7 +181,7 @@ class Fan(pg.GraphicsObject):
         self.menu = QtGui.QMenu()
         self.menu.setTitle(self.tr("FanMenu"))
         remAct = QtGui.QAction(self.tr("Remove select"), self.menu)
-        remAct.triggered.connect(global_inst.win_.vb.remove)
+        remAct.triggered.connect(global_inst.win_.vb.removeSelect)
 
         cancAct = QtGui.QAction(self.tr("Cancle"), self.menu)
         cancAct.triggered.connect(self.mouseCancleMenue)

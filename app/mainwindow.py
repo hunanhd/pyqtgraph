@@ -37,7 +37,7 @@ class MainWindow(QtGui.QMainWindow):
         global_inst.win_.vb.enableAutoRange()
 
     def test(self):
-        global_inst.win_.vb.remove()
+        global_inst.win_.vb.removeSelect()
 
     def methodChoose(self):
         mtd = VMethodDlg()

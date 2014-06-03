@@ -152,12 +152,14 @@ class Tunnel(TObject):
             evt.accept()
 
     def itemChange(self, change, value):
+        print "enter itemChange-----------------"
         ret = TObject.itemChange(self, change, value)
         objs = findByClass(global_inst.win_.vb.addedItems,Tunnel)
         if change == 21 or change == 22:
             return ret
         self.doJunction(self.spt,objs)
         self.doJunction(self.ept,objs)
+        print "leave itemChange-----------------"
         return ret
 
     def doJunction(self,pt,objs):
@@ -166,9 +168,6 @@ class Tunnel(TObject):
             if pt == item.spt or pt == item.ept:
                 tunnels.append(item)
         junctionClosure(tunnels,pt)
-
-    def mouseClickEvent(self, ev):
-        TObject.mouseClickEvent(self,ev)
 
 if __name__ == '__main__':
     a = [

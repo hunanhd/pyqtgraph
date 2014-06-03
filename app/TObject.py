@@ -97,7 +97,7 @@ class TObject(pg.GraphicsObject):
         self.menu = QtGui.QMenu()
         self.menu.setTitle(self.tr("TObjectMenu"))
         remAct = QtGui.QAction(QtCore.QCoreApplication.translate('TObject',"Remove selected items"), self.menu)
-        remAct.triggered.connect(global_inst.win_.vb.remove)
+        remAct.triggered.connect(global_inst.win_.vb.removeSelect)
 
         cancAct = QtGui.QAction(QtCore.QCoreApplication.translate('TObject',"Cancle"), self.menu)
         cancAct.triggered.connect(self.mouseCancleMenue)

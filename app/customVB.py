@@ -19,7 +19,8 @@ class CustomViewBox(pg.ViewBox):
     def resizeEvent(self,ev):
         self.setPos(0,0)
 
-    def remove(self):
+    def removeSelect(self):
+        print "enter removeSelect+++++++++++++++"
         self.disableAutoRange(pg.ViewBox.XYAxes)
         all_items = global_inst.win_.vb.addedItems
         tunnels = findByClass(all_items,Tunnel)
@@ -29,33 +30,33 @@ class CustomViewBox(pg.ViewBox):
                 # b.hide()
                 self.removeItem(b)
         for f in fans:
+            print f
             if f.selectFlag:
                 self.removeItem(f)
                 self.removeItem(f.arrow)
                 # f.hide()
                 # f.arrow.hide()
+        print "leave removeSelect+++++++++++++++"
 
     def removeFans(self):
         all_items = global_inst.win_.vb.addedItems
         fans = findByClass(all_items,Fan)
         fan_Arrows = findByClass(all_items,pg.ArrowItem)
-        if fans is 0:
-            return
         for fan in fans:
             self.removeItem(fan)
             self.removeItem(fan.arrow)
+            # fan.hide()
+            # fan.arrow.hide()
 
     def removeAll(self):
         self.disableAutoRange(pg.ViewBox.XYAxes)
         all_items = global_inst.win_.vb.addedItems
         tunnels = findByClass(all_items,Tunnel)
         self.removeFans()
-        if len(tunnels) is 0:
-            return
         for t in tunnels:
             print t
-            t.hide()
-            # self.removeItem(t)
+            # t.hide()
+            self.removeItem(t)
         # for b in findAllTunnels(self):
         #     self.removeItem(b)
 
@@ -88,7 +89,7 @@ class CustomViewBox(pg.ViewBox):
         tunnels = findByClass(all_items,Tunnel)
         fans = findByClass(all_items,Fan)
         if ev.key() == QtCore.Qt.Key_Delete:
-            self.remove()
+            self.removeSelect()
         if ev.key() == QtCore.Qt.Key_Escape:
             for b in tunnels:
                 if b.selectFlag:
@@ -135,7 +136,7 @@ class CustomViewBox(pg.ViewBox):
         remFanAct = QtGui.QAction(self.tr("Remove fans"), self.menu)
         selAllAct = QtGui.QAction(self.tr("Select all items"), self.menu)
         remAllAct.triggered.connect(self.removeAll)
-        remAct.triggered.connect(self.remove)
+        remAct.triggered.connect(self.removeSelect)
         remFanAct.triggered.connect(self.removeFans)
         selAllAct.triggered.connect(self.selectAll)
 

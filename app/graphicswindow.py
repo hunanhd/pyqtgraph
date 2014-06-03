@@ -109,6 +109,7 @@ class GraphicsWindow(pg.GraphicsView):
                 self.vb.addItem(t3)
                 self.vb.addItem(t1)
                 self.vb.addItem(t4)
+
                 # self.vb.addItem(t5)
                 # self.vb.addItem(t6)
                 # self.auto_junction()
