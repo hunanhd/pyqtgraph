@@ -37,6 +37,8 @@ class GraphicsWindow(pg.GraphicsView):
         self.axis.setRotation(0)
         self.vb.addItem(self.axis)
 
+
+
         # 添加十字光标
         # self.vLine = pg.InfiniteLine(angle=90, movable=False)
         # self.hLine = pg.InfiniteLine(angle=0, movable=False)
@@ -161,6 +163,17 @@ class GraphicsWindow(pg.GraphicsView):
                 self.vb.scene().update()
             if self.mode == 'InsertFan':
                 self.insertFan(evt)
+                self.plot = pg.PlotItem()
+                self.vb.addItem(self.plot)
+                self.vb.removeItem(self.plot.autoBtn)
+                self.plot.hideAxis('left')
+                self.plot.hideAxis('bottom')
+                self.c = self.plot.plot(x=np.linspace(mousePt.x(),0.001,1000),y=np.linspace(mousePt.y(),0.001,1000))
+                a = pg.CurveArrow(self.c)
+                a.setStyle(headLen=40)
+                self.plot.addItem(a)
+                self.anim = a.makeAnimation(loop=-1)
+                self.anim.start()
         self.mode = 'NoMode'
         evt.accept()
 

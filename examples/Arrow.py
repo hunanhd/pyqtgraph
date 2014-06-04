@@ -24,7 +24,7 @@ w.resize(400,600)
 w.setCentralWidget(cw)
 w.setWindowTitle('pyqtgraph example: Arrow')
 
-p = cw.addPlot(row=0, col=0)
+# p = cw.addPlot(row=0, col=0)
 p2 = cw.addPlot(row=1, col=0)
 
 ## variety of arrow shapes
@@ -35,18 +35,21 @@ a4 = pg.ArrowItem(angle=-20, tipAngle=30, baseAngle=-30, headLen=40, tailLen=Non
 a2.setPos(10,0)
 a3.setPos(20,0)
 a4.setPos(30,0)
-p.addItem(a1)
-p.addItem(a2)
-p.addItem(a3)
-p.addItem(a4)
-p.setRange(QtCore.QRectF(-20, -10, 60, 20))
+# p.addItem(a1)
+# p.addItem(a2)
+# p.addItem(a3)
+# p.addItem(a4)
+# p.setRange(QtCore.QRectF(-20, -10, 60, 20))
 
 
 ## Animated arrow following curve
-c = p2.plot(x=np.sin(np.linspace(0, 2*np.pi, 1000)), y=np.cos(np.linspace(0, 6*np.pi, 1000)))
-a = pg.CurveArrow(c)
+c = p2.plot(x=np.sin(np.linspace(0, 2*np.pi, 1000)), y=np.cos(np.linspace(0, 6*np.pi, 1000)),pixMode = False)
+p2.hideAxis('left')
+p2.hideAxis('bottom')
+a = pg.CurveArrow(c,pixMode = False)
 a.setStyle(headLen=40)
 p2.addItem(a)
+c.hide()
 anim = a.makeAnimation(loop=-1)
 anim.start()
 
